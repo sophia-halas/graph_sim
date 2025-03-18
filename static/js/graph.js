@@ -95,6 +95,7 @@ function deleteGraph(graph) {
     graph.$('edge').remove();
     console.log("Deleted" + graph);
     document.getElementById("iso").disabled = true;
+    coloredNodesLeft, coloredNodesRight = [];
     updateButtonState();
 }
 
@@ -113,7 +114,15 @@ function getNodePositionAfterMoving(graph, node) {
     }
 }
 
-function deleteObject(object) {
+function removeFromColoredNodesIfNecessary(object, graph){
+    coloredNodes = graph === "cyLeft" ? coloredNodesLeft : coloredNodesRight;
+    const index = coloredNodes.indexOf(object);
+    if (index !== -1) coloredNodes.splice(index, 1);
+    updateButtonState();
+}
+
+function deleteObject(object, graph = null) {
+    if(graph) removeFromColoredNodesIfNecessary(object, graph);
     object.remove(); 
     console.log('Object removed: ' + object.id());
     document.getElementById("iso").disabled = true;
@@ -266,7 +275,7 @@ cyLeft.on('tap', 'node', function(evt) {let node = evt.target; changeNodeColor(n
 cyRight.on('tap', 'node', function(evt) {let node = evt.target; changeNodeColor(node, "cyRight");});
 cyLeft.on('dragfree', 'node', function(evt) {let node = evt.target; getNodePositionAfterMoving(cyLeft,node);});
 cyRight.on('dragfree', 'node', function(evt) {let node = evt.target; getNodePositionAfterMoving(cyRight,node);});
-cyLeft.on('cxttap', 'node', function(evt) {let node = evt.target; deleteObject(node);});
-cyRight.on('cxttap', 'node', function(evt) {let node = evt.target; deleteObject(node);});
+cyLeft.on('cxttap', 'node', function(evt) {let node = evt.target; deleteObject(node, "cyLeft");});
+cyRight.on('cxttap', 'node', function(evt) {let node = evt.target; deleteObject(node, "cyRight");});
 cyLeft.on('cxttap', 'edge', function(evt) {let edge = evt.target; deleteObject(edge);});
 cyRight.on('cxttap', 'edge', function(evt) {let edge = evt.target; deleteObject(edge);});
