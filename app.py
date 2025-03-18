@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-from tw_be import Graph, Vertex, twin_width  # Importuj svoje triedy a funkciu
-from isomorph import find_isomorphisms
-from similarity import compute_similarity
+from backend.tw_be import Graph, Vertex, twin_width  # Importuj svoje triedy a funkciu
+from backend.isomorph import find_isomorphisms
+from backend.similarity import compute_similarity
 from flask_cors import CORS
 
 app = Flask(__name__)

@@ -150,7 +150,7 @@ async function getTwinWidth(graph, eleId) {
     const graphData = graphToJson(graph)
     graphData.tnorm = document.getElementById("tNorm").value;
     try {
-        const response = await fetch('http://127.0.0.1:5000/get-tw', {
+        const response = await fetch('https://graph-sim.onrender.com/get-tw', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -177,7 +177,7 @@ async function getTwinWidth(graph, eleId) {
 }
 
 async function getIsomorphisms(){
-    fetch('http://127.0.0.1:5000/check-isomorphism', {
+    fetch('https://graph-sim.onrender.com/check-isomorphism', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ graph1: graphToJson(cyLeft), graph2: graphToJson(cyRight) })
@@ -219,7 +219,7 @@ function closePopup() {
 }
 
 async function getSimilarity(){
-    fetch('http://127.0.0.1:5000/get-similarity', {
+    fetch('https://graph-sim.onrender.com/get-similarity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ graph1: graphToJson(cyLeft), graph2: graphToJson(cyRight), tnorm: document.getElementById("tNorm").value })

@@ -1,6 +1,6 @@
 from itertools import permutations
 from collections import defaultdict
-from tw_be import Graph, Vertex
+from backend.tw_be import Graph, Vertex
 import itertools
 import numpy as np
 import networkx as nx

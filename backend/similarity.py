@@ -1,6 +1,6 @@
 import numpy as np
-from isomorph import find_isomorphisms
-from tw_be import Graph, Vertex
+from backend.isomorph import find_isomorphisms
+from backend.tw_be import Graph, Vertex
 
 def t_norm(u, v, tnorm):
     match tnorm:
