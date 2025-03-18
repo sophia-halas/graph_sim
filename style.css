@@ -1,0 +1,186 @@
+.container{
+    display: flex;
+    flex-direction: column; 
+    height: 96vh;
+    width: 98vw;
+}
+.basic-settings, .computing {
+    width:85vw;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: linear-gradient(to right, #c1d7f5, #a6c1ee);
+    padding: 20px;
+    align-self: center;
+    font-family: "Arial", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    flex-wrap: wrap
+}
+.computing{
+    margin-top: auto;
+}
+input{
+    border-radius: 8px;
+    width: 60px;
+    height: 30px;
+    font-size: 16px;
+    border: 1px solid #4a90e2; 
+    text-align: center;
+    transition: all 0.3s ease;
+}
+input:focus {
+    outline: none;
+    border-color: #1e6eea;
+    box-shadow: 0 0 8px rgba(30, 110, 234, 0.3);
+}
+select {
+    border-radius: 8px;
+    height: 35px;
+    font-size: 14px;
+    padding: 5px;
+    border: 1px solid #4a90e2;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+select:focus {
+    outline: none;
+    border-color: #1e6eea;
+    box-shadow: 0 0 8px rgba(30, 110, 234, 0.3);
+}
+
+
+button {
+    background:  #1e6eea;
+    color: white; 
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+}
+
+button:hover {
+    transform: scale(1.05); 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); 
+}
+
+button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.iso{
+    position: absolute;
+    left: 20px; /* Posunie tlačidlo doľava */
+    align-self: flex-start; 
+    background: #493ee6;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.compute{
+    margin-left: 20px;
+}
+
+.canvas{
+    height: 100vh;
+    width: 85vw;
+    align-self: center;
+    border-radius: 2px;
+    background-color:#f5f8fc;
+    justify-content: center;
+    display: flex;
+}
+
+.left, .right{
+    display: flex;
+    height:100%;
+    width:42vw;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+}
+.line{
+    display: inline-block;
+    width: 3px;
+    height:100%;
+    background-color: #d5ddf5;
+}
+
+.compute2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center; /* Zarovná obsah do stredu */
+    flex-grow: 1; /* Zabezpečí, že compute2 vyplní dostupný priestor */
+    margin: 0 auto;
+}
+.buttons-div1, .buttons-div2{
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    display: flex;
+    gap:10px;
+    margin-top:5px;
+}
+
+.left .right .buttons-div2, .buttons-div1 {
+    justify-content: flex-start;
+}
+
+.add{
+    background-color: rgb(69, 223, 94);
+}
+.delete{
+    background-color: rgb(219, 78, 42);
+}
+
+.popup{
+    display: none;  /* Šírka podľa obsahu */
+    max-width: 90vw;        /* Maximálna šírka (napr. 90% šírky obrazovky) */
+    min-width: 10vw;
+    padding: 20px;
+    background: white;
+    border: 1px solid black;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: auto;         /* Povolenie scrollovania ak je obsah väčší */
+    max-height: 80vh;
+    border-radius: 20px;
+    background-color:#f5f8fc;
+    border-color: #d5ddf5;
+    border-width: 3px;
+    }
+    
+.isomorpishmListContainer{
+    max-height: 60vh;
+    overflow-y: auto; 
+    border: 1px solid #dddddd; 
+    padding: 5px;
+    flex-grow:1;
+}
+
+button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
