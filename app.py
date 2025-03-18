@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from backend.tw_be import Graph, Vertex, twin_width  # Importuj svoje triedy a funkciu
 from backend.isomorph import find_isomorphisms
 from backend.similarity import compute_similarity
@@ -28,7 +28,11 @@ def build_graph_from_json(data):
 def index():
     return "App is running!"
 
-@app.route('/get-tw', methods=['POST'])
+@app.route('/graph-sim', methods=['GET'])
+def graph_sim():
+    return render_template('graph_sim.html')
+
+@app.route('https://graph-sim.onrender.com/get-tw', methods=['POST'])
 def get_tw():
     data = request.json  # Očakávame JSON dáta
     tnorm = data["tnorm"]
@@ -52,7 +56,7 @@ def get_tw():
     })
 
 
-@app.route('/check-isomorphism', methods=['POST'])
+@app.route('https://graph-sim.onrender.com/check-isomorphism', methods=['POST'])
 def check_isomorphism():
     data = request.json
 
@@ -71,7 +75,7 @@ def check_isomorphism():
         'mappings': mappings  # Zoznam všetkých možných mapovaní vrcholov
     })
 
-@app.route('/get-similarity', methods=['POST'])
+@app.route('https://graph-sim.onrender.com/get-similarity', methods=['POST'])
 def get_similarity():
     data = request.json
     if 'graph1' not in data or 'graph2' not in data:
