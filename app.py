@@ -32,7 +32,7 @@ def index():
 def graph_sim():
     return render_template('graph_sim.html')
 
-@app.route('https://graph-sim.onrender.com/get-tw', methods=['POST'])
+@app.route('/get-tw', methods=['POST'])
 def get_tw():
     data = request.json  # Očakávame JSON dáta
     tnorm = data["tnorm"]
@@ -56,7 +56,7 @@ def get_tw():
     })
 
 
-@app.route('https://graph-sim.onrender.com/check-isomorphism', methods=['POST'])
+@app.route('/check-isomorphism', methods=['POST'])
 def check_isomorphism():
     data = request.json
 
@@ -75,7 +75,7 @@ def check_isomorphism():
         'mappings': mappings  # Zoznam všetkých možných mapovaní vrcholov
     })
 
-@app.route('https://graph-sim.onrender.com/get-similarity', methods=['POST'])
+@app.route('/get-similarity', methods=['POST'])
 def get_similarity():
     data = request.json
     if 'graph1' not in data or 'graph2' not in data:
