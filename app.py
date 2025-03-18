@@ -24,6 +24,10 @@ def build_graph_from_json(data):
 
     return G
 
+@app.route('/', methods=['GET'])
+def index():
+    return "App is running!"
+
 @app.route('/get-tw', methods=['POST'])
 def get_tw():
     data = request.json  # Očakávame JSON dáta
