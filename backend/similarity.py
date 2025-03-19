@@ -36,17 +36,17 @@ def s_norm(u, v, tnorm):
 
 def compute_similarity(G1, G2, tnorm):
     """
-    Vypočíta podobnosť fuzzy grafov G1 a G2 podľa definovanej metriky.
+    Computes fuzzy similarity of 2 fuzzy graphs
     
-    :param G1: Prvý fuzzy graf (Graph objekt)
-    :param G2: Druhý fuzzy graf (Graph objekt)
-    :param tnorm: Funkcia t-normy
-    :return: Hodnota similarity S(G1, G2) v rozsahu [0, 1]
+    :param G1: first fuzzy graph (Graph object)
+    :param G2: second fuzzy graph (Graph object)
+    :param tnorm: t-norm
+    :return: Fuzzy similarity S(G1, G2) -> [0,1]
     """
-    # Najdi všetky izomorfizmy
+    # find all isomorphisms
     isomorphic, mappings = find_isomorphisms(G1, G2)
     if not isomorphic:
-        return "X"  # Ak nie sú izomorfné, similarity je 0
+        return "X"  # not possible to compute similarity
 
     r_values = []  # Uchovávame všetky r_k hodnoty
 
@@ -58,36 +58,38 @@ def compute_similarity(G1, G2, tnorm):
             mapped_vertex = G2.vertices[mapping[vertex_name]]
             
 
-            # Prechádzame cez všetkých susedov v G1
+            # iterate through all neighbors in G1
             for neighbor, weight in vertex.neighbors:
                 mapped_neighbor_name = mapping[neighbor]
                 
-                edge_id = tuple(sorted([vertex_name, neighbor]))  # Napr. ('A', 'C') alebo ('C', 'A')
+                edge_id = tuple(sorted([vertex_name, neighbor]))  # for example ('A', 'C') or ('C', 'A')
                 if edge_id in processed_edges:
-                    continue  # Túto hranu sme už spracovali
+                    continue  # the edge was processed already
 
                 processed_edges.add(edge_id)
 
-                # Nájdeme hranu v G2 a zistíme jej váhu
+                # find edge in G2 and its weight
                 mapped_weight = None
                 for mapped_n, mapped_w in mapped_vertex.neighbors:
                     if mapped_n == mapped_neighbor_name:
                         mapped_weight = mapped_w
                         break
                 
+                # |hi - vi|
                 if mapped_weight is not None:
                     r_k_values.append(abs(weight[0] - mapped_weight[0]))
 
-        # S-norma na všetkých rozdieloch
-        r_k = 0  # Začína od 0 (pre S-normu min je 0)
+        r_k = 0  # 0 is a neutral element in s-norms
  
+        # apply s-norm on |hi - vi| values
         for diff in r_k_values:
             r_k = s_norm(r_k, diff, tnorm)
 
         r_values.append(r_k)
 
-    # T-norma na všetkých r_k hodnotách
-    r = 1 # Začína od 1 (pre T-normu max je 1)
+    r = 1 # 1 is a neutral element in t-norms
+
+    # apply t-norm on all r_k values
     for r_k in r_values:
         r = t_norm(r, r_k, tnorm)
         print(r_k)

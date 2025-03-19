@@ -12,12 +12,12 @@ def build_graph_from_json(data):
     Creates Graph instance from json
     """
     G = Graph()
-    # Pridanie vrcholov
+    # add nodes
     for node in data["nodes"]:
         vertex = Vertex(node["name"], float(node["membershipFunction"]))
         G.add_vertex(vertex)
 
-    # Pridanie hrán
+    # add edges
     for edge in data["edges"]:
         u, v, weight = edge["source"], edge["target"], (float(edge["weight"]), 0)
         G.add_edge(u, v, weight)
@@ -34,25 +34,24 @@ def graph_sim():
 
 @app.route('/get-tw', methods=['POST'])
 def get_tw():
-    data = request.json  # Očakávame JSON dáta
+    data = request.json  # awaiting json data
     tnorm = data["tnorm"]
  
     if 'nodes' not in data or 'edges' not in data:
         return ""
 
-    # Vytvorenie grafu
+    # create graph
     G = build_graph_from_json(data)
 
-    # Výpočet twin-width
-    tw_value, sequence = twin_width(G, tnorm)  # Funkcia teraz vracia aj postupnosť
+    tw_value, sequence = twin_width(G, tnorm) 
 
-    # Ošetrenie nekonečna
+    # invalid value
     if tw_value == float('inf'):
-        tw_value = "X"  # Môžeš použiť aj nejaké veľké číslo, napr. 1e9
+        tw_value = "X"  
 
     return jsonify({
         'tw': tw_value,
-        'sequence': sequence  # Zaslanie optimálnej postupnosti
+        'sequence': sequence 
     })
 
 
@@ -63,16 +62,16 @@ def check_isomorphism():
     if 'graph1' not in data or 'graph2' not in data:
         return jsonify({'error': 'Invalid input'}), 400
 
-    # Vytvorenie grafov
+    # create graphs
     G1 = build_graph_from_json(data['graph1'])
     G2 = build_graph_from_json(data['graph2'])
 
-    # Nájdeme všetky izomorfizmy
+    # find all isomorphisms
     isomorphic, mappings = find_isomorphisms(G1, G2)
 
     return jsonify({
         'isomorphic': isomorphic,
-        'mappings': mappings  # Zoznam všetkých možných mapovaní vrcholov
+        'mappings': mappings  
     })
 
 @app.route('/get-similarity', methods=['POST'])

@@ -4,8 +4,8 @@ var coloredNodesLeft = [];
 var coloredNodesRight = [];
 
 function getRandomRelativePosition() {
-    let randomX = Math.random() * 0.8 + 0.1; // 10% až 90% šírky
-    let randomY = Math.random() * 0.8 + 0.1; // 10% až 90% výšky
+    let randomX = Math.random() * 0.8 + 0.1; // 10% - 90% of width
+    let randomY = Math.random() * 0.8 + 0.1; // 10% - 90% of height
     return { x: randomX, y: randomY };
 }
 
@@ -24,7 +24,7 @@ function createEmptyGraph(containerId) {
             { selector: 'node', style: { 
                 'label': 'data(label)',
                 'background-color': 'blue', 
-                'text-wrap': 'wrap',   // Povolenie zalomenia textu
+                'text-wrap': 'wrap',  
                 'text-max-width': 70,
                 'width':30,
                 'height':30, 
@@ -100,7 +100,7 @@ function deleteGraph(graph) {
 }
 
 function getNodePositionAfterMoving(graph, node) {
-    let absPos = node.position(); // Absolútna pozícia
+    let absPos = node.position(); 
     
     let relPos = {
         x: absPos.x / graph.width(),
@@ -128,24 +128,23 @@ function deleteObject(object, graph = null) {
     document.getElementById("iso").disabled = true;
 }
 function graphToJson(graph) {
-    // Získanie uzlov
     const nodes = graph.nodes().map(node => {
         return {
             name: node.data('id'),
-            membershipFunction: node.data('fuzzy_value') || 0  // Predpokladám, že "membershipFunction" je v date uzla
+            membershipFunction: node.data('fuzzy_value') || 0 
         };
     });
 
-    // Získanie hrán
+
     const edges = graph.edges().map(edge => {
         return {
             source: edge.source().data('id'),
             target: edge.target().data('id'),
-            weight: edge.data('fuzzy_value') || [0, 0]  // Predpokladám, že "weight" je v date hrany
+            weight: edge.data('fuzzy_value') || [0, 0]  
         };
     });
 
-    // Vytvorenie JSON objektu
+    // create json object
     const graphData = {
         nodes: nodes,
         edges: edges
@@ -249,7 +248,7 @@ function updateButtonState() {
     button.disabled = (coloredNodesRight.length !== 2);
 }
 
-// Volanie funkcie vždy, keď sa `coloredNodes` zmení
+
 
 var cyLeft = createEmptyGraph("cyLeft");
 var cyRight = createEmptyGraph("cyRight");
