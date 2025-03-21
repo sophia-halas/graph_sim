@@ -48,10 +48,11 @@ def compute_similarity(G1, G2, tnorm):
     if not isomorphic:
         return "X"  # not possible to compute similarity
 
-    r_values = []  # Uchovávame všetky r_k hodnoty
-
+    r_k_values = []  # Uchovávame všetky r_k hodnoty
+    power = len(mappings)
+    print("Počet izomorfizmov: " +power)
     for mapping in mappings:
-        r_k_values = []
+        r_i = 0
         processed_edges = set()
 
         for vertex_name, vertex in G1.vertices.items():
@@ -75,22 +76,19 @@ def compute_similarity(G1, G2, tnorm):
                         mapped_weight = mapped_w
                         break
                 
-                # |hi - vi|
+                # ri += |hi - vi|^pow
                 if mapped_weight is not None:
-                    r_k_values.append(abs(weight[0] - mapped_weight[0]))
+                    r_i += pow((abs(weight[0] - mapped_weight[0])), power)
 
-        r_k = 0  # 0 is a neutral element in s-norms
- 
-        # apply s-norm on |hi - vi| values
-        for diff in r_k_values:
-            r_k = s_norm(r_k, diff, tnorm)
+        #n-th root
+        r_i = r_i ** (1/power)
 
-        r_values.append(r_k)
+        r_k_values.append(r_i)
 
     r = 1 # 1 is a neutral element in t-norms
 
     # apply t-norm on all r_k values
-    for r_k in r_values:
+    for r_k in r_k_values:
         r = t_norm(r, r_k, tnorm)
         print(r_k)
     return 1 - r

@@ -248,7 +248,13 @@ function updateButtonState() {
     button.disabled = (coloredNodesRight.length !== 2);
 }
 
+function openModal() {
+    document.getElementById("helpModal").style.display = "block";
+}
 
+function closeModal() {
+    document.getElementById("helpModal").style.display = "none";
+}
 
 var cyLeft = createEmptyGraph("cyLeft");
 var cyRight = createEmptyGraph("cyRight");

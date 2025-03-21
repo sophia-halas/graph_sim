@@ -84,10 +84,16 @@
   <button onclick="closePopup()" style="margin-top: 10px; padding: 5px 10px;">Close</button>
 </div>
 
-
+<div id="helpModal" class="helpModal">
+  <div class="modal-content">
+      <span class="close" onclick="closeModal()">Close</span>
+      <p>Toto je nápoveda: Kliknutím na tlačidlo vykonáte akciu.</p>
+  </div>
 </div>
 
 </div>
+
+
 <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
 </body>
 
