@@ -79,7 +79,7 @@ button:active {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.iso, .helpButton{
+.iso{
     position: absolute;
     left: 20px; /* Posunie tlačidlo doľava */
     align-self: flex-start; 
@@ -90,10 +90,16 @@ button:active {
     cursor: pointer;
     margin-right: auto;
 }
-.helpButton{
-    right: 20px;
+.helpButton {
+    position: absolute;
+    right: 20px; /* Umiestni tlačidlo na pravý okraj */
+    top: 50%;
+    transform: translateY(-50%); /* Zarovná na stred vertikálne */
     background: #dadd0b;
-    margin-left: auto;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
 }
 
 .compute{
