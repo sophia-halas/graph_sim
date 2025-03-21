@@ -50,7 +50,7 @@ def compute_similarity(G1, G2, tnorm):
 
     r_k_values = []  # Uchovávame všetky r_k hodnoty
     power = len(mappings)
-    print("Počet izomorfizmov: " +power)
+    print("Počet izomorfizmov: " +str(power))
     for mapping in mappings:
         r_i = 0
         processed_edges = set()
