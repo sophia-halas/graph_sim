@@ -93,6 +93,7 @@ button:active {
 .helpButton{
     right: 20px;
     background: #dadd0b;
+    margin-left: auto;
 }
 
 .compute{
