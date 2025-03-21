@@ -79,7 +79,7 @@ button:active {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.iso{
+.iso, .helpButton{
     position: absolute;
     left: 20px; /* Posunie tlačidlo doľava */
     align-self: flex-start; 
@@ -89,6 +89,10 @@ button:active {
     border: none;
     cursor: pointer;
     margin-right: auto;
+}
+.helpButton{
+    right: 20px;
+    background: #dadd0b;
 }
 
 .compute{
@@ -172,7 +176,7 @@ button:active {
     border-width: 3px;
     }
     
-.isomorpishmListContainer{
+.isomorpishmListContainer, .helpContainer{
     max-height: 60vh;
     overflow-y: auto; 
     border: 1px solid #dddddd; 
