@@ -94,7 +94,6 @@ button:active {
     position: absolute;
     right: 20px; /* Umiestni tlačidlo na pravý okraj */
     top: 50%;
-    transform: translateY(-50%); /* Zarovná na stred vertikálne */
     background: #dadd0b;
     color: white;
     padding: 10px 15px;
@@ -190,7 +189,9 @@ button:active {
     padding: 5px;
     flex-grow:1;
 }
-
+.helpContainer{
+    border: none;
+}
 button:disabled {
     background-color: grey;
     cursor: not-allowed;
@@ -213,11 +214,4 @@ button:disabled {
     border: 1px solid #888;
     width: 50%;
     text-align: center;
-}
-.close {
-    color: red;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
 }

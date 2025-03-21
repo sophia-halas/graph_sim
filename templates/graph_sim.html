@@ -88,8 +88,24 @@
 
 <div id="helpModal" class="popup">
   <div class="helpContainer">
-      <span class="close" onclick="closeModal()">Close</span>
-      <p>Toto je nápoveda: Kliknutím na tlačidlo vykonáte akciu.</p>
+    <h2>Help Guide</h2>
+      <p>At the top, the user can select a <strong>T-Norm</strong>, which is crucial for computing <strong>fuzzy twin width</strong> and <strong>fuzzy similarity</strong>.</p>
+      <p>The user can set the <strong>membership function values (0-1) for nodes and edges</strong> before adding them.</p>
+      <ul>
+          <li><strong>"Add Node"</strong> adds nodes to the drawing area.</li>
+          <li>To add an edge between two nodes:
+              <ul>
+                  <li>Click on the nodes you want to connect (they will turn green).</li>
+                  <li>Click <strong>"Add Edge"</strong> to create the connection.</li>
+              </ul>
+          </li>
+          <li>To delete an object (<strong>node or edge</strong>), right-click on it.</li>
+      </ul>
+      <p>The <strong>"Compute"</strong> button calculates <strong>fuzzy graph similarity</strong> and <strong>twin width</strong>.</p>
+      <ul>
+          <li>If the graphs are <strong>isomorphic</strong>, the <strong>"Show Isomorphisms"</strong> button will be enabled.</li>
+          <li>This button allows you to view all possible graph mappings.</li>
+      </ul>
   </div>
   <button onclick="closeModal()" style="margin-top: 10px; padding: 5px 10px;">Close</button>
 </div>
