@@ -173,9 +173,9 @@ function getTwinWidth(graph, eleId) {
         console.log("Twin-width:", data.tw);
 
         // Zaokrúhlenie hodnoty ak je číselná, inak nechaj prázdne
-        document.getElementById(eleId).value = (data.tw !== null && data.tw !== undefined) 
+        document.getElementById(eleId).value = (data.tw !== null && data.tw !== undefined && data.tw != "X") 
             ? Math.round(data.tw * 10000) / 10000  // Zaokrúhlenie na 2 desatinné miesta
-            : "";
+            : "X";
     })
     .catch(error => {
         console.error("Chyba pri získavaní twin-width:", error);
