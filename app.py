@@ -11,18 +11,24 @@ def build_graph_from_json(data):
     """
     Creates Graph instance from json
     """
+    if not isinstance(data, dict) or 'nodes' not in data or 'edges' not in data:
+        return None
+    
     G = Graph()
-    # add nodes
-    for node in data["nodes"]:
-        vertex = Vertex(node["name"], float(node["membershipFunction"]))
-        G.add_vertex(vertex)
+    try:
+        # add nodes
+        for node in data["nodes"]:
+            vertex = Vertex(node["name"], float(node["membershipFunction"]))
+            G.add_vertex(vertex)
 
-    # add edges
-    for edge in data["edges"]:
-        u, v, weight = edge["source"], edge["target"], (float(edge["weight"]), 0)
-        G.add_edge(u, v, weight)
-
-    return G
+        # add edges
+        for edge in data["edges"]:
+            u, v, weight = edge["source"], edge["target"], (float(edge["weight"]), 0)
+            G.add_edge(u, v, weight)
+        
+        return G
+    except (KeyError, ValueError, TypeError):
+        return None
 
 @app.route('/', methods=['GET'])
 def index():
@@ -35,13 +41,14 @@ def graph_sim():
 @app.route('/get-tw', methods=['POST'])
 def get_tw():
     data = request.json  # awaiting json data
+    if not data or "tnorm" not in data:
+        return jsonify({'error': "Invalid input"}), 400
     tnorm = data["tnorm"]
- 
-    if 'nodes' not in data or 'edges' not in data:
-        return ""
-
+    
     # create graph
     G = build_graph_from_json(data)
+    if not G:
+        return jsonify({'error': "Invalid graph structure"}), 400
 
     tw_value, sequence = twin_width(G, tnorm) 
 
@@ -59,13 +66,16 @@ def get_tw():
 def check_isomorphism():
     data = request.json
 
-    if 'graph1' not in data or 'graph2' not in data:
-        return jsonify({'error': 'Invalid input'}), 400
+    if not data or "graph1" not in data or "graph2" not in data:
+        return jsonify({'error': "Invalid input"}), 400
 
     # create graphs
     G1 = build_graph_from_json(data['graph1'])
     G2 = build_graph_from_json(data['graph2'])
 
+    if not G1 or not G2:
+        return jsonify({'error': "Invalid graph structure"}), 400
+    
     # find all isomorphisms
     isomorphic, mappings = find_isomorphisms(G1, G2)
 
@@ -77,14 +87,15 @@ def check_isomorphism():
 @app.route('/get-similarity', methods=['POST'])
 def get_similarity():
     data = request.json
-    if 'graph1' not in data or 'graph2' not in data:
-        return jsonify({'error': 'Invalid input'}), 400
+    if not data or "graph1" not in data or "graph2" not in data or "tnorm" not in data:
+        return jsonify({'error': "Invalid input"}), 400
 
     G1 = build_graph_from_json(data['graph1'])
     G2 = build_graph_from_json(data['graph2'])
-    tnorm = data["tnorm"]
+    if not G1 or not G2:
+        return jsonify({'error': "Invalid graph structure"}), 400
 
-    similarity = compute_similarity(G1, G2, tnorm)
+    similarity = compute_similarity(G1, G2, data["tnorm"])
     return jsonify({'similarity': similarity})
 
 if __name__ == '__main__':

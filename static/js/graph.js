@@ -154,35 +154,35 @@ function graphToJson(graph) {
 }
 
 // TWIN WIDTH
-async function getTwinWidth(graph, eleId) {
-    const graphData = graphToJson(graph)
+function getTwinWidth(graph, eleId) {
+    const graphData = graphToJson(graph);
     graphData.tnorm = document.getElementById("tNorm").value;
-    try {
-        const response = await fetch('https://graph-sim.onrender.com/get-tw', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(graphData)
-        });
 
+    fetch('https://graph-sim.onrender.com/get-tw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(graphData)
+    })
+    .then(response => {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
-        const data = await response.json();
+        return response.json();
+    })
+    .then(data => {
         console.log("Twin-width:", data.tw);
 
-        // Set to empty value if twin width is null or undefined
-        //treba este zaokruhlit
-        document.getElementById(eleId).value = data.tw !== null && data.tw !== undefined ? data.tw : "";
-
-        return data.tw;
-    } catch (error) {
+        // Zaokrúhlenie hodnoty ak je číselná, inak nechaj prázdne
+        document.getElementById(eleId).value = (data.tw !== null && data.tw !== undefined) 
+            ? Math.round(data.tw * 10000) / 10000  // Zaokrúhlenie na 2 desatinné miesta
+            : "";
+    })
+    .catch(error => {
         console.error("Chyba pri získavaní twin-width:", error);
-        document.getElementById("tw1").value = ""; // Empty value when error
-    }
+        document.getElementById(eleId).value = ""; // Vyčistenie hodnoty pri chybe
+    });
 }
+
 
 async function getIsomorphisms(){
     fetch('https://graph-sim.onrender.com/check-isomorphism', {
