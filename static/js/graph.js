@@ -238,7 +238,7 @@ async function getSimilarity(){
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById("sim").value = Math.round(data.similrity * 10000) / 10000;
+        document.getElementById("sim").value = (data.similarity !== "X") ? Math.round(data.similarity * 10000) / 10000: "X";
         console.log("Graph similarity: " + data.similarity);
         if(data.similarity !== "X") document.getElementById("iso").disabled = false;
     })
