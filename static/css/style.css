@@ -93,8 +93,8 @@ button:active {
 .helpButton {
     position: absolute;
     right: 20px; /* Umiestni tlačidlo na pravý okraj */
-    top: 50%;
-    transform: translateY(-10%);
+    /*top: 50%;*/
+    transform: translateY(-50%);
     background: #dadd0b;
     color: white;
     padding: 10px 15px;

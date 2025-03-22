@@ -42,13 +42,13 @@ def graph_sim():
 def get_tw():
     data = request.json  # awaiting json data
     if not data or "tnorm" not in data:
-        return jsonify({'error': "Invalid input"}), 400
+        return jsonify({'error': "Invalid input", 'tw': "X"}), 400
     tnorm = data["tnorm"]
     
     # create graph
     G = build_graph_from_json(data)
     if not G:
-        return jsonify({'error': "Invalid graph structure"}), 400
+        return jsonify({'error': "Invalid graph structure", 'tw': "X"}), 400
 
     tw_value, sequence = twin_width(G, tnorm) 
 
