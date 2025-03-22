@@ -222,6 +222,10 @@ function openPopup(data) {
     document.getElementById("popup").style.display = "block";
 }
 
+function closeError(){
+    document.getElementById("errorMessage").style.display = "none";
+
+}
 function closePopup() {
     document.getElementById("popup").style.display = "none";
 }
@@ -234,11 +238,22 @@ async function getSimilarity(){
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById("sim").value = data.similarity;
-        console.log("Graph similarity: " + data.similarity)
+        document.getElementById("sim").value = Math.round(data.similrity * 10000) / 10000;
+        console.log("Graph similarity: " + data.similarity);
         if(data.similarity !== "X") document.getElementById("iso").disabled = false;
     })
-    .catch(error => console.error("Error:", error));
+    .catch(error => {
+            console.error("Error:", error);
+            showErrorMessage(error.message);
+        });
+}
+
+function showErrorMessage(message) {
+    const errorBox = document.getElementById("errorMessage");
+    if (errorBox) {
+        errorBox.innerText = message;
+        errorBox.style.display = "block";
+    }
 }
 
 function updateButtonState() {
