@@ -1,14 +1,26 @@
-let nodeId = 0;
-var nodes = [];
-var coloredNodesLeft = [];
-var coloredNodesRight = [];
+// Global variables for node management
+let nodeId = 0; // Unique identifier for each node
+var nodes = []; // Stores all nodes with their positions
+var coloredNodesLeft = []; // Stores selected nodes for graph "cyLeft"
+var coloredNodesRight = []; // Stores selected nodes for graph "cyRight"
 
+/**
+ * Generates a random relative position within the graph container.
+ * Ensures nodes are placed within 10% to 90% of the container's width and height.
+ * @returns {Object} Relative position { x, y }
+ */
 function getRandomRelativePosition() {
     let randomX = Math.random() * 0.8 + 0.1; // 10% - 90% of width
     let randomY = Math.random() * 0.8 + 0.1; // 10% - 90% of height
     return { x: randomX, y: randomY };
 }
 
+/**
+ * Converts a relative position to an absolute position within the graph container.
+ * @param {Object} graph - The Cytoscape graph instance.
+ * @param {Object} relPos - The relative position { x, y }.
+ * @returns {Object} Absolute position { x, y } in pixels.
+ */
 function getAbsolutePosition(graph, relPos) {
     let container = graph.container();
     let width = container.clientWidth;
@@ -16,6 +28,13 @@ function getAbsolutePosition(graph, relPos) {
 
     return { x: relPos.x * width, y: relPos.y * height };
 }
+
+
+/**
+ * Creates an empty Cytoscape graph inside the specified container.
+ * @param {string} containerId - The ID of the HTML element to contain the graph.
+ * @returns {Object} Cytoscape graph instance.
+ */
 function createEmptyGraph(containerId) { 
     return cytoscape({
         container: document.getElementById(containerId),
@@ -36,8 +55,12 @@ function createEmptyGraph(containerId) {
     });
 }
 
+/**
+ * Adds a new node to the specified graph.
+ * The node's position is randomized, and its fuzzy degree value is set by user input.
+ * @param {Object} graph - The Cytoscape graph instance.
+ */
 function addNode(graph) { 
-    document.getElementById("iso").disabled = true;
     let degree = parseFloat(document.getElementById("nodeDegree").value);
     if(degree < 0) degree = 0;
     if (degree > 1) degree = 1;
@@ -51,6 +74,10 @@ function addNode(graph) {
     console.log("Added Node: " + newNodeId);
 }
 
+/**
+ * Removes the first colored node from the selected graph and resets its color to blue.
+ * @param {string} graphId - The ID of the graph ("cyLeft" or "cyRight").
+ */
 function removeFirstColoredNode(graphId) {
     let coloredNodes = (graphId == "cyLeft") ? coloredNodesLeft : coloredNodesRight;
     let node = coloredNodes.shift();  
@@ -58,6 +85,12 @@ function removeFirstColoredNode(graphId) {
 
 }
 
+/**
+ * Changes the color of a node to indicate selection.
+ * If a node is already selected, it resets to blue; otherwise, it turns lime.
+ * @param {Object} node - The Cytoscape node object.
+ * @param {string} graphId - The ID of the graph ("cyLeft" or "cyRight").
+ */
 function changeNodeColor(node, graphId) {
     let coloredNodes = (graphId == "cyLeft") ? coloredNodesLeft : coloredNodesRight;
     for (var i = 0; i < coloredNodes.length; i++) {
@@ -78,8 +111,13 @@ function changeNodeColor(node, graphId) {
     updateButtonState();
 }
 
+/**
+ * Adds an edge between two selected nodes in the given graph.
+ * The edge is assigned a fuzzy degree value based on user input.
+ * @param {Object} graph - The Cytoscape graph instance.
+ * @param {string} graphId - The ID of the graph ("cyLeft" or "cyRight").
+ */
 function  addEdge(graph, graphId) {
-    document.getElementById("iso").disabled = true;
     let coloredNodes = (graphId == "cyLeft") ? coloredNodesLeft : coloredNodesRight; 
     if(coloredNodes.length != 2) return;
     let degree = parseFloat(document.getElementById("edgeDegree").value);
@@ -90,15 +128,24 @@ function  addEdge(graph, graphId) {
         
 }
 
+/**
+ * Deletes all nodes and edges from the given graph.
+ * Resets selection states and disables the isomorphism button.
+ * @param {Object} graph - The Cytoscape graph instance.
+ */
 function deleteGraph(graph) {
     graph.$('node').remove();
     graph.$('edge').remove();
     console.log("Deleted" + graph);
-    document.getElementById("iso").disabled = true;
     coloredNodesLeft, coloredNodesRight = [];
     updateButtonState();
 }
 
+/**
+ * Updates the relative position of a node after it has been moved.
+ * @param {Object} graph - The Cytoscape graph instance.
+ * @param {Object} node - The Cytoscape node object.
+ */
 function getNodePositionAfterMoving(graph, node) {
     let absPos = node.position(); 
     
@@ -114,6 +161,12 @@ function getNodePositionAfterMoving(graph, node) {
     }
 }
 
+
+/**
+ * Removes an object from the list of colored nodes if it has been deleted from graph.
+ * @param {Object} object - The node or edge to check.
+ * @param {string} graph - The ID of the graph ("cyLeft" or "cyRight").
+ */
 function removeFromColoredNodesIfNecessary(object, graph){
     coloredNodes = graph === "cyLeft" ? coloredNodesLeft : coloredNodesRight;
     const index = coloredNodes.indexOf(object);
@@ -121,12 +174,23 @@ function removeFromColoredNodesIfNecessary(object, graph){
     updateButtonState();
 }
 
+/**
+ * Deletes a node or edge from the graph.
+ * If the object is a selected node, it is also removed from the colored nodes list.
+ * @param {Object} object - The Cytoscape node or edge to remove.
+ * @param {string} [graph=null] - The ID of the graph ("cyLeft" or "cyRight"), if applicable.
+ */
 function deleteObject(object, graph = null) {
     if(graph) removeFromColoredNodesIfNecessary(object, graph);
     object.remove(); 
     console.log('Object removed: ' + object.id());
-    document.getElementById("iso").disabled = true;
 }
+
+/**
+ * Converts a Cytoscape graph into a JSON representation.
+ * @param {Object} graph - The Cytoscape graph instance.
+ * @returns {Object} JSON representation of the graph.
+ */
 function graphToJson(graph) {
     const nodes = graph.nodes().map(node => {
         return {
@@ -153,7 +217,12 @@ function graphToJson(graph) {
     return graphData;
 }
 
-// TWIN WIDTH
+
+/**
+ * Fetches the twin-width value of a given graph from a remote server.
+ * @param {Object} graph - The Cytoscape graph instance.
+ * @param {string} eleId - The ID of the HTML input element to display the result.
+ */
 function getTwinWidth(graph, eleId) {
     const graphData = graphToJson(graph);
     graphData.tnorm = document.getElementById("tNorm").value;
@@ -184,6 +253,11 @@ function getTwinWidth(graph, eleId) {
 }
 
 
+
+/**
+ * Fetches and displays possible isomorphisms between two graphs.
+ * The result is shown in a popup after clicking "Show isomorphisms" button.
+ */
 async function getIsomorphisms(){
     fetch('https://graph-sim.onrender.com/check-isomorphism', {
         method: 'POST',
@@ -195,14 +269,19 @@ async function getIsomorphisms(){
         if (data.isomorphic) {
             console.log("Graphs are isomorphic.");
             console.log("Possible isomorphisms:", data.mappings);
-            openPopup(data);
+            
         } else {
             console.log("Graphs are not isomorphic.");
         }
+        openPopup(data);
     })
     .catch(error => console.error("Error:", error));
 }
 
+/**
+ * Displays a popup with the list of possible isomorphisms.
+ * @param {Object} data - The response data containing isomorphism mappings.
+ */
 function openPopup(data) {
     let list = document.getElementById("isomorphismList");
     list.innerHTML = "";
@@ -222,14 +301,26 @@ function openPopup(data) {
     document.getElementById("popup").style.display = "block";
 }
 
+
+/**
+ * Closes the error message box.
+ */
 function closeError(){
     document.getElementById("errorMessage").style.display = "none";
 
 }
+
+/**
+ * Closes the popup.
+ */
 function closePopup() {
     document.getElementById("popup").style.display = "none";
 }
 
+/**
+ * Fetches and displays the similarity score between two graphs.
+ * The result is shown in an input field.
+ */
 async function getSimilarity(){
     fetch('https://graph-sim.onrender.com/get-similarity', {
         method: 'POST',
@@ -248,6 +339,10 @@ async function getSimilarity(){
         });
 }
 
+/**
+ * Displays an error message in the designated error box.
+ * @param {string} message - The error message to display.
+ */
 function showErrorMessage(message) {
     const errorBox = document.getElementById("errorMessage");
     if (errorBox) {
@@ -256,6 +351,10 @@ function showErrorMessage(message) {
     }
 }
 
+/**
+ * Updates the state of the "Add Edge" buttons.
+ * Enables the button only if exactly two nodes are selected.
+ */
 function updateButtonState() {
     let button = document.getElementById("addEdgeLeft");
     button.disabled = (coloredNodesLeft.length !== 2);
@@ -263,10 +362,17 @@ function updateButtonState() {
     button.disabled = (coloredNodesRight.length !== 2);
 }
 
+/**
+ * Opens the help modal.
+ */
 function openModal() {
     document.getElementById("helpModal").style.display = "block";
 }
 
+
+/**
+ * Closes the help modal.
+ */
 function closeModal() {
     document.getElementById("helpModal").style.display = "none";
 }
