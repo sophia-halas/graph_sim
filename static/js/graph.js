@@ -5,6 +5,27 @@ var coloredNodesLeft = []; // Stores selected nodes for graph "cyLeft"
 var coloredNodesRight = []; // Stores selected nodes for graph "cyRight"
 
 /**
+ * Returns the value of the t-norm based on the given tnorm type and two values x and y.
+ * 
+ * @param {string} tnorm - The type of t-norm, can be minimum, lukasiewicz, product, or drastic product.
+ * @param {number} x - The first value for the t-norm.
+ * @param {number} y - The second value for the t-norm.
+ * @returns {number} - The result of applying the t-norm to values x and y.
+ */
+function getTNormValue(tnorm, x, y) {
+    switch (tnorm) {
+        case "min":
+            return Math.min(x, y);
+        case "luk":
+            return Math.max(x + y - 1, 0);
+        case "prod":
+            return x * y;
+        case "drast":
+            return Math.max(x, y) === 1 ? Math.min(x, y) : 0;
+    }
+}
+
+/**
  * Generates a random relative position within the graph container.
  * Ensures nodes are placed within 10% to 90% of the container's width and height.
  * @returns {Object} Relative position { x, y }
@@ -42,7 +63,7 @@ function createEmptyGraph(containerId) {
         style: [ 
             { selector: 'node', style: { 
                 'label': 'data(label)',
-                'background-color': 'blue', 
+                'background-color': 'blue', // Default color for nodes
                 'text-wrap': 'wrap',  
                 'text-max-width': 70,
                 'width':30,
@@ -62,14 +83,14 @@ function createEmptyGraph(containerId) {
  */
 function addNode(graph) { 
     let degree = parseFloat(document.getElementById("nodeDegree").value);
-    if(degree < 0) degree = 0;
-    if (degree > 1) degree = 1;
+    if(degree < 0) degree = 0; // Ensure degree is not negative
+    if (degree > 1) degree = 1; // Ensure degree is not greater than 1
     let newNodeId = 'Node' + ++nodeId;
-    let relPos = getRandomRelativePosition();
+    let relPos = getRandomRelativePosition(); // Generate random relative position
 
     nodes.push({ id: newNodeId, relPos: relPos });
 
-    let absPos = getAbsolutePosition(graph, relPos);
+    let absPos = getAbsolutePosition(graph, relPos); // Convert to absolute position
     graph.add({ data: { id: newNodeId, label: `${newNodeId} Degree: ${degree}`, fuzzy_value:  degree}, position: absPos });
     console.log("Added Node: " + newNodeId);
 }
@@ -80,8 +101,8 @@ function addNode(graph) {
  */
 function removeFirstColoredNode(graphId) {
     let coloredNodes = (graphId == "cyLeft") ? coloredNodesLeft : coloredNodesRight;
-    let node = coloredNodes.shift();  
-    node.style('background-color', 'blue');  
+    let node = coloredNodes.shift();   // Remove first colored node
+    node.style('background-color', 'blue');  // Reset its color to blue
 
 }
 
@@ -95,20 +116,20 @@ function changeNodeColor(node, graphId) {
     let coloredNodes = (graphId == "cyLeft") ? coloredNodesLeft : coloredNodesRight;
     for (var i = 0; i < coloredNodes.length; i++) {
         if (coloredNodes[i].id() == node.id()) {
-            node.style('background-color', 'blue'); 
+            node.style('background-color', 'blue'); // Reset color to blue
             console.log('Node colored back to blue: ' + node.id());
-            coloredNodes.splice(i, 1);
-            updateButtonState();
+            coloredNodes.splice(i, 1);  // Remove from selected nodes list
+            updateButtonState(); // Update "Add Edge" button state after change
             return; 
         }
     }
 
-    if (coloredNodes.length == 2) removeFirstColoredNode(graphId);
+    if (coloredNodes.length == 2) removeFirstColoredNode(graphId); // Ensure only 2 nodes are selected
 
-    node.style('background-color', 'lime');
-    coloredNodes.push(node);
+    node.style('background-color', 'lime'); // Change selected node color to lime
+    coloredNodes.push(node);  // Add to the selected nodes list
     console.log('Node colored: ' + node.id());
-    updateButtonState();
+    updateButtonState();// Update "Add Edge" button state after change
 }
 
 /**
@@ -119,10 +140,12 @@ function changeNodeColor(node, graphId) {
  */
 function  addEdge(graph, graphId) {
     let coloredNodes = (graphId == "cyLeft") ? coloredNodesLeft : coloredNodesRight; 
-    if(coloredNodes.length != 2) return;
+    if(coloredNodes.length != 2) return; // Ensure exactly two nodes are selected to connect
     let degree = parseFloat(document.getElementById("edgeDegree").value);
-    if(degree < 0) degree = 0;
-    if (degree > Math.max(coloredNodes[0].data('fuzzy_value'), coloredNodes[1].data('fuzzy_value'))) degree = Math.max(coloredNodes[0].data('fuzzy_value'), coloredNodes[1].data('fuzzy_value'));
+    if(degree < 0) degree = 0; // Ensure degree is not negative
+    max_allowed_edge_degree = getTNormValue(document.getElementById("tNorm").value, coloredNodes[0].data('fuzzy_value'), coloredNodes[1].data('fuzzy_value'));
+    if (degree > max_allowed_edge_degree) degree = max_allowed_edge_degree;  // Ensure degree is not greater than the tnorm value of the 2 nodes
+    // Add edge between the two selected nodes with the specified fuzzy degree
     graph.add({data: {id: coloredNodes[0].id().concat(coloredNodes[1].id()),source: coloredNodes[0].id(),target: coloredNodes[1].id(), label: `Degree: ${degree}`, fuzzy_value:  degree}});
     console.log("Added Edge: " + coloredNodes[0].id().concat(coloredNodes[1].id() +  `Degree: ${degree}`));
         
@@ -134,11 +157,13 @@ function  addEdge(graph, graphId) {
  * @param {Object} graph - The Cytoscape graph instance.
  */
 function deleteGraph(graph) {
-    graph.$('node').remove();
-    graph.$('edge').remove();
+    graph.$('node').remove(); // Remove all nodes
+    graph.$('edge').remove(); // Remove all edges
     console.log("Deleted" + graph);
-    coloredNodesLeft, coloredNodesRight = [];
-    updateButtonState();
+    // Clear the selected nodes list
+    coloredNodesLeft = [];
+    coloredNodesRight = [];
+    updateButtonState(); // Update "Add Edge" button state after deletion
 }
 
 /**
@@ -147,16 +172,16 @@ function deleteGraph(graph) {
  * @param {Object} node - The Cytoscape node object.
  */
 function getNodePositionAfterMoving(graph, node) {
-    let absPos = node.position(); 
+    let absPos = node.position(); // Get node's current absolute position
     
     let relPos = {
         x: absPos.x / graph.width(),
         y: absPos.y / graph.height()
-    };
+    }; // Convert absolute position to relative position
 
-    let nodeData = nodes.find(n => n.id === node.id());
+    let nodeData = nodes.find(n => n.id === node.id());// Find the node data
     if (nodeData) {
-        nodeData.relPos = relPos;
+        nodeData.relPos = relPos; // Update relative position in nodes list
         console.log(`Updated ${node.id()} -> relPos:`, relPos);
     }
 }
@@ -170,8 +195,8 @@ function getNodePositionAfterMoving(graph, node) {
 function removeFromColoredNodesIfNecessary(object, graph){
     coloredNodes = graph === "cyLeft" ? coloredNodesLeft : coloredNodesRight;
     const index = coloredNodes.indexOf(object);
-    if (index !== -1) coloredNodes.splice(index, 1);
-    updateButtonState();
+    if (index !== -1) coloredNodes.splice(index, 1);// Remove object from colored nodes if present
+    updateButtonState(); // Update "Ad Edge" button state after removal
 }
 
 /**
@@ -181,6 +206,7 @@ function removeFromColoredNodesIfNecessary(object, graph){
  * @param {string} [graph=null] - The ID of the graph ("cyLeft" or "cyRight"), if applicable.
  */
 function deleteObject(object, graph = null) {
+    // If the object to be deleted is a colored node (lime node) delete it from coloredNodes array
     if(graph) removeFromColoredNodesIfNecessary(object, graph);
     object.remove(); 
     console.log('Object removed: ' + object.id());
@@ -192,6 +218,7 @@ function deleteObject(object, graph = null) {
  * @returns {Object} JSON representation of the graph.
  */
 function graphToJson(graph) {
+    // Map nodes to JSON format with membership function
     const nodes = graph.nodes().map(node => {
         return {
             name: node.data('id'),
@@ -199,7 +226,7 @@ function graphToJson(graph) {
         };
     });
 
-
+    // Map edges to JSON format with weights (fuzzy values)
     const edges = graph.edges().map(edge => {
         return {
             source: edge.source().data('id'),
@@ -208,7 +235,7 @@ function graphToJson(graph) {
         };
     });
 
-    // create json object
+    // Create JSON object containing nodes and edges
     const graphData = {
         nodes: nodes,
         edges: edges
@@ -227,6 +254,7 @@ function getTwinWidth(graph, eleId) {
     const graphData = graphToJson(graph);
     graphData.tnorm = document.getElementById("tNorm").value;
 
+    // Send the graph data to the server to get the twin-width value
     fetch('https://graph-sim.onrender.com/get-tw', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -234,21 +262,22 @@ function getTwinWidth(graph, eleId) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`HTTP error! Status: ${response.status}`); // Handle error response
         }
-        return response.json();
+        return response.json(); // Parse the response as JSON
     })
     .then(data => {
         console.log("Twin-width:", data.tw);
 
-        // Zaokrúhlenie hodnoty ak je číselná, inak nechaj prázdne
+        // Round the twin-width value if numeric and update the result input
         document.getElementById(eleId).value = (data.tw !== null && data.tw !== undefined && data.tw != "X") 
-            ? Math.round(data.tw * 10000) / 10000  // Zaokrúhlenie na 2 desatinné miesta
-            : "X";
+            ? Math.round(data.tw * 10000) / 10000  // Round to 2 decimals
+            : "X"; // Display "X" if no valid twin-width
     })
     .catch(error => {
-        console.error("Error while getiing Twin Width:", error);
-        document.getElementById(eleId).value = ""; // Vyčistenie hodnoty pri chybe
+        showErrorMessage(error.message);
+        console.error("Error while getting Twin Width:", error);
+        document.getElementById(eleId).value = "X"; 
     });
 }
 
@@ -275,7 +304,32 @@ async function getIsomorphisms(){
         }
         openPopup(data);
     })
-    .catch(error => console.error("Error:", error));
+    .catch(error => {
+        showErrorMessage(error.message);
+        console.error("Error:", error);
+    });
+}
+
+/**
+ * Fetches and displays the similarity score between two graphs.
+ * The result is shown in an input field.
+ */
+async function getSimilarity(){
+    // Send request to server to get the similarity between two graphs
+    fetch('https://graph-sim.onrender.com/get-similarity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ graph1: graphToJson(cyLeft), graph2: graphToJson(cyRight), tnorm: document.getElementById("tNorm").value })
+    })
+    .then(response => response.json())// Parse the response as JSON
+    .then(data => {
+        document.getElementById("sim").value = (data.similarity !== "X") ? Math.round(data.similarity * 10000) / 10000: "X";  // Update similarity input
+        console.log("Graph similarity: " + data.similarity);
+    })
+    .catch(error => {
+            console.error("Error:", error);
+            showErrorMessage(error.message);
+        });
 }
 
 /**
@@ -284,21 +338,22 @@ async function getIsomorphisms(){
  */
 function openPopup(data) {
     let list = document.getElementById("isomorphismList");
-    list.innerHTML = "";
+    list.innerHTML = "";// Clear previous list items
 
+    // If graphs are isomorphic, display the mappings
     if (data.isomorphic) {
         data.mappings.forEach((mapping, index) => {
             let li = document.createElement("li");
-            li.textContent = `${index + 1}: ${JSON.stringify(mapping)}`;
+            li.textContent = `${index + 1}: ${JSON.stringify(mapping)}`;  // Display mapping index and data
             list.appendChild(li);
         });
     } else {
         let li = document.createElement("li");
-        li.textContent = "Graphs are not isomorphic.";
+        li.textContent = "Graphs are not isomorphic.";   // Display message if not isomorphic
         list.appendChild(li);
     }
 
-    document.getElementById("popup").style.display = "block";
+    document.getElementById("popup").style.display = "block"; // Show the popup
 }
 
 
@@ -317,26 +372,6 @@ function closePopup() {
     document.getElementById("popup").style.display = "none";
 }
 
-/**
- * Fetches and displays the similarity score between two graphs.
- * The result is shown in an input field.
- */
-async function getSimilarity(){
-    fetch('https://graph-sim.onrender.com/get-similarity', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ graph1: graphToJson(cyLeft), graph2: graphToJson(cyRight), tnorm: document.getElementById("tNorm").value })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("sim").value = (data.similarity !== "X") ? Math.round(data.similarity * 10000) / 10000: "X";
-        console.log("Graph similarity: " + data.similarity);
-    })
-    .catch(error => {
-            console.error("Error:", error);
-            showErrorMessage(error.message);
-        });
-}
 
 /**
  * Displays an error message in the designated error box.
@@ -346,7 +381,7 @@ function showErrorMessage(message) {
     const errorBox = document.getElementById("errorMessage");
     if (errorBox) {
         errorBox.innerHTML = `<p>${message}</p><button onclick="closeError()" style="margin-top: 10px; padding: 5px 10px;">Close</button>`;
-        errorBox.style.display = "block";
+        errorBox.style.display = "block"; // Display the error box
     }
 }
 
@@ -376,17 +411,25 @@ function closeModal() {
     document.getElementById("helpModal").style.display = "none";
 }
 
+/**
+ * Shows loading screen.
+ */
 function showLoading() {
     document.getElementById("loadingScreen").style.display = "flex";
 }
 
+/**
+ * Hides loading screen.
+ */
 function hideLoading() {
     document.getElementById("loadingScreen").style.display = "none";
 }
 
+// Graph instances for left and right graphs
 var cyLeft = createEmptyGraph("cyLeft");
 var cyRight = createEmptyGraph("cyRight");
 
+// Event listeners for various actions on the left and right graphs
 document.getElementById("addNodeLeft").addEventListener("click", function() {addNode(cyLeft);});
 document.getElementById("addNodeRight").addEventListener("click", function() { addNode(cyRight);});
 document.getElementById("addEdgeLeft").addEventListener("click", function() {addEdge(cyLeft, "cyLeft");});
@@ -394,15 +437,15 @@ document.getElementById("addEdgeRight").addEventListener("click", function() { a
 document.getElementById("deleteLeft").addEventListener("click", function() { deleteGraph(cyLeft);});
 document.getElementById("deleteRight").addEventListener("click", function() { deleteGraph(cyRight);});
 document.getElementById("compute").addEventListener("click", () => { showLoading(); setTimeout(async () => { await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity(); hideLoading(); }, 100); });
+document.getElementById("iso").addEventListener("click", async function() { await getIsomorphisms();});
+
 window.addEventListener("resize", function() {nodes.forEach(node => {let absPos = getAbsolutePosition(cyLeft, node.relPos);cyLeft.getElementById(node.id).position(absPos);});});
 
-//input limit
+// Input validation for node and edge degree
 document.getElementById("nodeDegree").addEventListener("input", function() {let value = parseFloat(this.value); if (value < 0) this.value = 0; if (value > 1) this.value = 1;});
 document.getElementById("edgeDegree").addEventListener("input", function() {let value = parseFloat(this.value); if (value < 0) this.value = 0; if (value > 1) this.value = 1;});
 
-// prepisat !
-document.getElementById("iso").addEventListener("click", async function() { await getIsomorphisms();});
-
+// Handle node interactions for left and right graphs
 cyLeft.on('tap', 'node', function(evt) {let node = evt.target; changeNodeColor(node, "cyLeft");});
 cyRight.on('tap', 'node', function(evt) {let node = evt.target; changeNodeColor(node, "cyRight");});
 cyLeft.on('dragfree', 'node', function(evt) {let node = evt.target; getNodePositionAfterMoving(cyLeft,node);});
