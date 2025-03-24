@@ -376,6 +376,14 @@ function closeModal() {
     document.getElementById("helpModal").style.display = "none";
 }
 
+function showLoading() {
+    document.getElementById("loadingScreen").style.display = "flex";
+}
+
+function hideLoading() {
+    document.getElementById("loadingScreen").style.display = "none";
+}
+
 var cyLeft = createEmptyGraph("cyLeft");
 var cyRight = createEmptyGraph("cyRight");
 
@@ -385,7 +393,7 @@ document.getElementById("addEdgeLeft").addEventListener("click", function() {add
 document.getElementById("addEdgeRight").addEventListener("click", function() { addEdge(cyRight, "cyRight");});
 document.getElementById("deleteLeft").addEventListener("click", function() { deleteGraph(cyLeft);});
 document.getElementById("deleteRight").addEventListener("click", function() { deleteGraph(cyRight);});
-document.getElementById("compute").addEventListener("click", async function() { await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity();});
+document.getElementById("compute").addEventListener("click", async function() { showLoading(); await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity(); hideLoading();});
 
 window.addEventListener("resize", function() {nodes.forEach(node => {let absPos = getAbsolutePosition(cyLeft, node.relPos);cyLeft.getElementById(node.id).position(absPos);});});
 

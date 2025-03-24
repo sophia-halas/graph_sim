@@ -218,3 +218,34 @@ button:disabled {
     width: 50%;
     text-align: center;
 }
+
+#loadingScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Polopriehľadné pozadie */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    display: none; /* Skryjeme na začiatku */
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid white;
+    border-top: 5px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
