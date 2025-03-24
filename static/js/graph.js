@@ -345,7 +345,7 @@ async function getSimilarity(){
 function showErrorMessage(message) {
     const errorBox = document.getElementById("errorMessage");
     if (errorBox) {
-        errorBox.innerText = message;
+        errorBox.innerHTML = `<p>${message}</p><button onclick="closeError()" style="margin-top: 10px; padding: 5px 10px;">Close</button>`;
         errorBox.style.display = "block";
     }
 }

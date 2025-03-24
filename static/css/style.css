@@ -91,15 +91,11 @@ button:active {
     margin-right: auto;
 }
 .helpButton {
-    position: absolute;
     right: 20px; /* Umiestni tlačidlo na pravý okraj */
     align-self: flex-end;
     margin-left: auto; 
-    /*top: 50%;*/
-    /*transform: translateY(-50%);*/
     background: #dadd0b;
     color: white;
-    padding: 10px 15px;
     border: none;
     cursor: pointer;
 }
@@ -248,4 +244,10 @@ button:disabled {
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+.helpDiv{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
