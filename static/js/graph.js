@@ -247,7 +247,7 @@ function getTwinWidth(graph, eleId) {
             : "X";
     })
     .catch(error => {
-        console.error("Chyba pri získavaní twin-width:", error);
+        console.error("Error while getiing Twin Width:", error);
         document.getElementById(eleId).value = ""; // Vyčistenie hodnoty pri chybe
     });
 }
