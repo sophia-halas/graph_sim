@@ -331,7 +331,6 @@ async function getSimilarity(){
     .then(data => {
         document.getElementById("sim").value = (data.similarity !== "X") ? Math.round(data.similarity * 10000) / 10000: "X";
         console.log("Graph similarity: " + data.similarity);
-        if(data.similarity !== "X") document.getElementById("iso").disabled = false;
     })
     .catch(error => {
             console.error("Error:", error);
