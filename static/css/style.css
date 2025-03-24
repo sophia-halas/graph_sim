@@ -219,7 +219,7 @@ button:disabled {
     text-align: center;
 }
 
-#loadingScreen {
+.loadingScreen {
     position: fixed;
     top: 0;
     left: 0;
