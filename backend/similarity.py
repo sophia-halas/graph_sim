@@ -45,11 +45,10 @@ def compute_similarity(G1, G2, tnorm):
         return "X"  # If graphs are not isomorphic, return "X" to indicate that similarity cannot be computed
 
     r_k_values = []  # Stores all computed r_k values for each isomorphism
-
+    num_edges = sum(len(vertex.neighbors) for vertex in G1.vertices.values()) // 2 # number of edges in G1
      # Iterate through all found isomorphisms
     for mapping in mappings:
         r_i = 0  # Initialize the similarity measure for the current isomorphism
-        power = 0 # The number of isomorphic edges counter
         processed_edges = set() # Keep track of processed edges to avoid duplicates
 
         for vertex_name, vertex in G1.vertices.items():
@@ -77,11 +76,11 @@ def compute_similarity(G1, G2, tnorm):
                 
                 # ri += |hi - vi|^pow
                 if mapped_weight is not None:
-                    r_i += pow((abs(weight[0] - mapped_weight[0])), power)
-                    power += 1
+                    r_i += pow((abs(weight[0] - mapped_weight[0])), num_edges)
+                    
 
         # Compute the n-th root of r_i
-        r_i = r_i ** (1/power)
+        r_i = r_i ** (1/num_edges)
 
         # Store the computed r_i for this isomorphism
         r_k_values.append(r_i)
