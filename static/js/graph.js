@@ -436,7 +436,20 @@ document.getElementById("addEdgeLeft").addEventListener("click", function() {add
 document.getElementById("addEdgeRight").addEventListener("click", function() { addEdge(cyRight, "cyRight");});
 document.getElementById("deleteLeft").addEventListener("click", function() { deleteGraph(cyLeft);});
 document.getElementById("deleteRight").addEventListener("click", function() { deleteGraph(cyRight);});
-document.getElementById("compute").addEventListener("click", () => { showLoading(); setTimeout(async () => { await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity(); hideLoading(); }, 100); });
+//document.getElementById("compute").addEventListener("click", () => { showLoading(); setTimeout(async () => { await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity(); hideLoading(); }, 100); });
+document.getElementById("compute").addEventListener("click", async () => {
+    showLoading();
+
+    // nechaj browser "vymaľovať" loading screen
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    await getTwinWidth(cyLeft, "tw1");
+    await getTwinWidth(cyRight, "tw2");
+    await getSimilarity();
+
+    hideLoading();
+});
+
 document.getElementById("iso").addEventListener("click", async function() { await getIsomorphisms();});
 
 window.addEventListener("resize", function() {nodes.forEach(node => {let absPos = getAbsolutePosition(cyLeft, node.relPos);cyLeft.getElementById(node.id).position(absPos);});});
