@@ -255,7 +255,7 @@ function getTwinWidth(graph, eleId) {
     graphData.tnorm = document.getElementById("tNorm").value;
 
     // Send the graph data to the server to get the twin-width value
-    fetch('https://graph-sim.onrender.com/get-tw', {
+    return fetch('https://graph-sim.onrender.com/get-tw', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(graphData)
@@ -316,7 +316,7 @@ async function getIsomorphisms(){
  */
 async function getSimilarity(){
     // Send request to server to get the similarity between two graphs
-    fetch('https://graph-sim.onrender.com/get-similarity', {
+    return fetch('https://graph-sim.onrender.com/get-similarity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ graph1: graphToJson(cyLeft), graph2: graphToJson(cyRight), tnorm: document.getElementById("tNorm").value })
@@ -436,8 +436,8 @@ document.getElementById("addEdgeLeft").addEventListener("click", function() {add
 document.getElementById("addEdgeRight").addEventListener("click", function() { addEdge(cyRight, "cyRight");});
 document.getElementById("deleteLeft").addEventListener("click", function() { deleteGraph(cyLeft);});
 document.getElementById("deleteRight").addEventListener("click", function() { deleteGraph(cyRight);});
-//document.getElementById("compute").addEventListener("click", () => { showLoading(); setTimeout(async () => { await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity(); hideLoading(); }, 100); });
-document.getElementById("compute").addEventListener("click", async () => {
+document.getElementById("compute").addEventListener("click", () => { showLoading(); setTimeout(async () => { await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity(); hideLoading(); }, 100); });
+/*document.getElementById("compute").addEventListener("click", async () => {
     showLoading();
 
     // nechaj browser "vymaľovať" loading screen
@@ -448,7 +448,7 @@ document.getElementById("compute").addEventListener("click", async () => {
     await getSimilarity();
 
     hideLoading();
-});
+});*/
 
 document.getElementById("iso").addEventListener("click", async function() { await getIsomorphisms();});
 
