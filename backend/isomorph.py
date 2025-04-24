@@ -41,11 +41,16 @@ def find_isomorphisms(G1, G2):
 
             # For each neighbor of v1 in G1, check if the corresponding neighbor exists in G2
             for neighbor, _ in v1.neighbors:
-                mapped_neighbor = mapping[neighbor.name]
+                mapped_neighbor = mapping[neighbor]
                 
                 # Find the corresponding vertex in G2 and check if an edge exists between them
                 g2_v1 = G2.vertices[mapped_v1]
-                found = any(n[0] == mapped_neighbor for n in g2_v1.neighbors)
+                #found = any(n[0] == mapped_neighbor for n in g2_v1.neighbors)
+                g2_neighbor = G2.vertices[mapped_neighbor]
+                has_edge_in_g2 = any(n[0] == mapped_neighbor for n in g2_v1.neighbors)
+                has_reverse_edge_in_g2 = any(n[0] == mapped_v1 for n in g2_neighbor.neighbors)
+
+                found = has_edge_in_g2 or has_reverse_edge_in_g2
 
                 if not found:
                     valid = False
