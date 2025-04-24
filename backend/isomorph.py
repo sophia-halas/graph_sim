@@ -41,7 +41,7 @@ def find_isomorphisms(G1, G2):
 
             # For each neighbor of v1 in G1, check if the corresponding neighbor exists in G2
             for neighbor, _ in v1.neighbors:
-                mapped_neighbor = mapping[neighbor]
+                mapped_neighbor = mapping[neighbor.name]
                 
                 # Find the corresponding vertex in G2 and check if an edge exists between them
                 g2_v1 = G2.vertices[mapped_v1]
