@@ -29,7 +29,7 @@ def build_graph_from_json(data):
         
         return G
     except (KeyError, ValueError, TypeError):
-        return None # Return None if JSON structure is incorrec
+        return None # Return None if JSON structure is incorrect
 
 @app.route('/', methods=['GET'])
 def index():
@@ -108,8 +108,13 @@ def get_similarity():
         return jsonify({'error': "Invalid graph structure"}), 400
 
     #vymazat!!!
+    print(data['graph1'])
+    print(data['graph2'])
+    print("json............built graphs")
     print(G1)
     print(G2)
+
+
     # Compute similarity
     similarity = compute_similarity(G1, G2, data["tnorm"])
     return jsonify({'similarity': similarity})
