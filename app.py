@@ -110,9 +110,6 @@ def get_similarity():
     #vymazat!!!
     print(data['graph1'])
     print(data['graph2'])
-    print("json............built graphs")
-    print(G1)
-    print(G2)
 
 
     # Compute similarity
