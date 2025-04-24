@@ -54,8 +54,9 @@ class Vertex:
         self.membershipFunction = membership_function
         self.neighbors = list()
 
-    def __str__(self):##################################################################### debugging
-        return f"{self.name} (μ={self.membershipFunction})"
+    def __str__(self):
+        neighbors_str = ", ".join(f"{n.name} (w={w[0]})" for n, w in self.neighbors)
+        return f"{self.name} (μ={self.membershipFunction}) -> [{neighbors_str}]"
 
     def add_neighbor(self, vertex, weight=(0, 0)):
         if vertex not in [n[0] for n in self.neighbors]:
@@ -76,14 +77,11 @@ class Graph:
         optimum_sequence = []
         twin_width_value = 0
 
-    def __str__(self):###############################################################
-            result = "Vertices:\n"
-            for v in self.vertices.values():
-                result += f"  {v}\n"
-            result += "Edges:\n"
-            for u, v, w in self.edges:
-                result += f"  {u} --({w[0]})--> {v}\n"
-            return result##############################################################pridane pre debugging
+    def __str__(self):###########################
+        result = "Graph:\n"
+        for v in self.vertices.values():
+            result += f"  {v}\n"
+        return result##############################################################pridane pre debugging
     
     def add_vertex(self, vertex):
         self.vertices[vertex.name] = vertex
