@@ -107,6 +107,9 @@ def get_similarity():
     if not G1 or not G2:
         return jsonify({'error': "Invalid graph structure"}), 400
 
+    #vymazat!!!
+    print(G1)
+    print(G2)
     # Compute similarity
     similarity = compute_similarity(G1, G2, data["tnorm"])
     return jsonify({'similarity': similarity})
