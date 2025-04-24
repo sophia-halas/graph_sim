@@ -110,6 +110,11 @@ def get_similarity():
     #vymazat!!!
     print(data['graph1'])
     print(data['graph2'])
+    print(".................................")
+    print(G1)
+    print(G2)
+    print("......isomorphism............")
+    print(find_isomorphisms(G1, G2))
 
 
     # Compute similarity

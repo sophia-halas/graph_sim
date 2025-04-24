@@ -55,7 +55,7 @@ class Vertex:
         self.neighbors = list()
 
     def __str__(self):
-        neighbors_str = ", ".join(f"{n.name} (w={w[0]})" for n, w in self.neighbors)
+        neighbors_str = ", ".join(f"{n} (w={w[0]})" for n, w in self.neighbors)
         return f"{self.name} (μ={self.membershipFunction}) -> [{neighbors_str}]"
 
     def add_neighbor(self, vertex, weight=(0, 0)):
