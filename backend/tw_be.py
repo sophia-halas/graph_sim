@@ -1,15 +1,24 @@
-import random
+# twinwidth_backend.py
+# The following code is a Python implementation of the (fuzzy) twin-width algorithm.
+# It uses a representation of graph and vertices as classes.
+# The algorithm and computation is based on Twin-Width Fuzzification by Marek Effenberger
+# Created by Marek Effenberger as a part of his bachelor thesis, BUT FIT 2025
+
 from itertools import combinations
 from copy import deepcopy
 import re
 
-#from sqlalchemy.sql.operators import truediv
-
+# Global constants, for basic computation, only the first three are used
 infinity = float('inf')
-
 lowest_max_degree = float('inf')
 best_sequences = []
 
+lowest_max_degree2 = float('inf')
+best_sequences2 = []
+lowest_max_degree3 = float('inf')
+best_sequences3 = []
+
+# Functions for t-norms and t-conorms
 def drastic_tnorm(u, v):
     if u == 1:
         return v
@@ -26,12 +35,12 @@ def drastic_tconorm(u, v):
     else:
         return 1
 
+# Depending on the operation, the function will return the result of the operation
 def merge_operation(u_black, u_red, v_black, v_red, operation, tnorm):
     if operation == 'node_merge' or operation == 'black_edge_merge':
         if tnorm == 'min':
             return max(u_black, v_black)
         elif tnorm == 'prod':
-            print(f"u_black: {u_black}, v_black: {v_black}, tnorm: {tnorm}")
             return u_black + v_black - u_black * v_black
         elif tnorm == 'luk':
             return min(u_black + v_black, 1)
@@ -48,15 +57,13 @@ def merge_operation(u_black, u_red, v_black, v_red, operation, tnorm):
         elif tnorm == 'drast':
             return drastic_tconorm(u_black, v_black) - drastic_tnorm(u_black - u_red, v_black - v_red)
 
+# Class for the vertex of the graph, which contains the name of the vertex, its membership function and its neighbors
 class Vertex:
     def __init__(self, name, membership_function):
         self.name = name
         self.membershipFunction = membership_function
+        # Neighbors are stored as a list of tuples, where each tuple contains the name of the neighbor and (black, red) edge weights
         self.neighbors = list()
-
-    def __str__(self):
-        neighbors_str = ", ".join(f"{n} (w={w[0]})" for n, w in self.neighbors)
-        return f"{self.name} (μ={self.membershipFunction}) -> [{neighbors_str}]"
 
     def add_neighbor(self, vertex, weight=(0, 0)):
         if vertex not in [n[0] for n in self.neighbors]:
@@ -70,48 +77,45 @@ class Vertex:
     def remove_neighbor(self, vertex_name):
         self.neighbors = [n for n in self.neighbors if n[0] != vertex_name]
 
-
+# Graph class, which contains the vertices and edges of the graph
 class Graph:
     def __init__(self):
         self.vertices = {}
         optimum_sequence = []
         twin_width_value = 0
 
-    def __str__(self):###########################
-        result = "Graph:\n"
-        for v in self.vertices.values():
-            result += f"  {v}\n"
-        return result##############################################################pridane pre debugging
-    
+    # Function to add a vertex to the graph
     def add_vertex(self, vertex):
         self.vertices[vertex.name] = vertex
 
+    # Function to add an edge to the graph
     def add_edge(self, u, v, weight = (0, 0)):
         if u in self.vertices and v in self.vertices:
             self.vertices[u].add_neighbor(v, weight)
             self.vertices[v].add_neighbor(u, weight)
 
+    # Function to remove an edge from the graph
     def find_vertex(self, vertex_name):
         for vertex in self.vertices:
             if vertex == vertex_name:
                 return self.vertices[vertex]
         return None
 
+    # Function to merge two vertices, constructing a new graph
     def merge_vertices(self, u, v, tnorm):
-    
+
         # Creating a new graph to store the merged vertices
         newGraph = Graph()
 
+        # Copying the vertices of the original graph to the new graph
         new_vertices = self.vertices.copy()
-        #print(f'Vertices: {list(new_vertices)}')
 
-
+        # If the vertices to be merged are in the graph
         if u in self.vertices and v in self.vertices:
 
-            # The new vertex will have the name of the first vertex
+            # We first compute the new sigma of the merged vertex according to the thesis
             membership = merge_operation(self.vertices[u].membershipFunction, 0, self.vertices[v].membershipFunction, 0, 'node_merge', tnorm)
             # The new vertex will be named as the concatenation of the names of the vertices
-            # its membership function will be the maximum of the two
             digits1 = re.sub(r"\D", "", u)
             digits2 = re.sub(r"\D", "", v)
             new_node_name = f'Node{digits1}{digits2}'
@@ -120,30 +124,24 @@ class Graph:
             # The neighbors of the new vertex will be the union of the neighbors of the two vertices
             new_vertex.neighbors = self.vertices[u].neighbors + self.vertices[v].neighbors
 
-            #print(f'NEW Vertex {new_vertex.name} Membership: {membership} Neighbors: {new_vertex.neighbors}')
-
+            # From the neighbors of the new vertex, we remove the vertices u and v
             new_vertex.remove_neighbor(u)
             new_vertex.remove_neighbor(v)
 
-            # If there is some duplicated neighbor, remove one of them
-            # for neighbor in new_vertex.neighbors:
-            #     if new_vertex.neighbors.count(neighbor) > 1:
-            #         new_vertex.remove_neighbor(neighbor[0])
-
-            # The neighbors of the new vertex will be updated
+            # For each neighbour of the union, we compute the new edge values
             u_neighbors = self.vertices[u].neighbors
             v_neighbors = self.vertices[v].neighbors
-
             for neighbor in new_vertex.neighbors:
 
+                # Prevention of double edges
                 if [n[0] for n in new_vertex.neighbors].count(neighbor[0]) > 1:
                     new_vertex.remove_neighbor(neighbor[0])
 
+                # Default values for the edge weights
                 u_weight = (0, 0)
-
                 v_weight = (0, 0)
 
-                # find the weight of the edge between the new vertex and the given neighbor
+                # Find the weight of the edge between the new vertex and the given neighbor
                 if neighbor[0] in [n[0] for n in u_neighbors]:
                     u_weight = u_neighbors[[n[0] for n in u_neighbors].index(neighbor[0])][1]
                     new_vertex.remove_neighbor(neighbor[0])
@@ -151,14 +149,15 @@ class Graph:
                     v_weight = v_neighbors[[n[0] for n in v_neighbors].index(neighbor[0])][1]
                     new_vertex.remove_neighbor(neighbor[0])
 
-                # red_degree = max(u_weight[0], v_weight[0]) - min(u_weight[0]-u_weight[1], v_weight[0]-v_weight[1])
-                # new_weight = (max(u_weight[0], v_weight[0]), red_degree)
+                # Compute the new edge weights, namely (\mu_T, and \mu_R) (the \mu_B is a subtraction of the two)
                 red_degree = merge_operation(u_weight[0], u_weight[1], v_weight[0], v_weight[1], 'red_edge_merge', tnorm)
                 edge_membership = merge_operation(u_weight[0], 0, v_weight[0], 0, 'black_edge_merge', tnorm)
+                # The new edge weight is a tuple of the form (total, red)
                 new_weight = (edge_membership, red_degree)
-
+                # Add the new edge to the new vertex
                 new_vertex.add_neighbor(neighbor[0], new_weight)
 
+                # If the neighbor is not u or v, we need to update the neighbor's edge weights
                 if neighbor[0] in new_vertices:
                     if (u, u_weight) in new_vertices[neighbor[0]].neighbors:
                         new_vertices[neighbor[0]].neighbors.remove((u, u_weight))
@@ -166,31 +165,28 @@ class Graph:
                         new_vertices[neighbor[0]].neighbors.remove((v, v_weight))
                     new_vertices[neighbor[0]].add_neighbor(new_vertex.name, new_weight)
 
+            # Add the new vertex to the new graph and remove the merged vertices
             new_vertices[new_vertex.name] = new_vertex
             new_vertices.pop(u)
             new_vertices.pop(v)
 
             newGraph.vertices = new_vertices
 
-            # if len(newGraph.vertices) == 1:
-            #     print(f'Final graph: {list(newGraph.vertices.keys())} Neighbors: {newGraph.vertices[new_vertex.name].neighbors}')
             return newGraph
 
+    # Function to find the maximum error degree of the graph
     def find_maximum_error_degree(self):
         max_error_degree = 0
-        # max_error_degree_vertex = None
         for vertex in self.vertices:
-            #print(f'Vertex: {vertex}')
-            #print(f'Neighbors: {self.vertices[vertex].neighbors}')
             error_degree = 0
             for neighbor in self.vertices[vertex].neighbors:
                 error_degree += neighbor[1][1]
                 if error_degree > max_error_degree:
                     max_error_degree = error_degree
-        #           max_error_degree_vertex = vertex
-        #print (f'Maximum error degree: {max_error_degree} at vertex {max_error_degree_vertex}')
+
         return max_error_degree
 
+# Function which sets the variables needed for the computation and runs the recursive function
 def twin_width(graph, tnorm):
     global lowest_max_degree, best_sequences
     lowest_max_degree = float('inf')
@@ -198,283 +194,42 @@ def twin_width(graph, tnorm):
     merge_all_sequences(graph, 0, tnorm)
     return lowest_max_degree, best_sequences
 
+# The actual recursive function which computes the twin-width of the graph
+# It merges all possible pairs of vertices and computes the maximum error degree of the new graph
+# For each sequence it computes the width, and if it is lower than the current minimum, it updates the minimum
 def merge_all_sequences(graph, max_degree, tnorm, sequence=[]):
     global lowest_max_degree, best_sequences
 
     if len(graph.vertices) == 1:
-        #print(f'Sequence: {sequence}')
-        #print(f'Max degree: {max_degree}')
         if max_degree < lowest_max_degree:
             lowest_max_degree = max_degree
             best_sequences = [sequence]
         elif max_degree == lowest_max_degree:
             best_sequences.append(sequence)
-            
         return
 
     for u, v in combinations(graph.vertices.keys(), 2):
-        # TODO: might switch the two lines below, when brain works again
         newG = deepcopy(graph).merge_vertices(u, v, tnorm)
         maximum_degree = newG.find_maximum_error_degree()
         new_sequence = sequence + [(u, v)]
         merge_all_sequences(newG, max(max_degree, maximum_degree), tnorm, new_sequence)
 
-
+# Function to merge all possible pairs of vertices in the graph
 def merge_all_possible_pairs(graph):
     vertices = list(graph.vertices.keys())
     for u, v in combinations(vertices, 2):
         newG = graph.merge_vertices(u, v)
-        #print(f'Merged {u} and {v} into new graph with vertices: {list(newG.vertices.keys())}')
-
-def merge_two_least_error(graph):
-    vertices = list(graph.vertices.keys())
-    min_error = float('inf')
-    min_error_vertices = None
-    graphCopy = deepcopy(graph)
-    for u, v in combinations(vertices, 2):
-        newG = graphCopy.merge_vertices(u, v, 'min')
-        # error equals the sum of the red degrees of the neighbors of the merged vertices
-        error = 0
-        u_digit = re.sub(r"\D", "", u)
-        v_digit = re.sub(r"\D", "", v)
-        new_node_key = f'Node{u_digit}{v_digit}'
-        for neighbor in newG.vertices[new_node_key].neighbors:
-            error += neighbor[1][1]
-        if error < min_error:
-            min_error = error
-            min_error_vertices = (u, v)
-        graphCopy = deepcopy(graph)
-    if min_error_vertices:
-        newG = graph.merge_vertices(min_error_vertices[0], min_error_vertices[1], 'min')
-        #print(f'Merged {min_error_vertices[0]} and {min_error_vertices[1]} into new graph with vertices: {list(newG.vertices.keys())}')
-        return newG, min_error_vertices
-
-def merge_two_least_error_graphcheck(graph):
-    vertices = list(graph.vertices.keys())
-    min_error = float('inf')
-    min_error_vertices = None
-    graphCopy = deepcopy(graph)
-    for u, v in combinations(vertices, 2):
-        newG = graphCopy.merge_vertices(u, v, 'min')
-        # error equals the sum of the red degrees of the neighbors of the merged vertices
-        error = 0
-        u_digit = re.sub(r"\D", "", u)
-        v_digit = re.sub(r"\D", "", v)
-        new_node_key = f'Node{u_digit}{v_digit}'
-        error = newG.find_maximum_error_degree()
-        #print(f'Error: {error}, Min error: {min_error}, Merged vertices: {u}, {v}')
-        if error < min_error:
-            min_error = error
-            min_error_vertices = (u, v)
-        graphCopy = deepcopy(graph)
-
-    if min_error_vertices:
-        newG = graph.merge_vertices(min_error_vertices[0], min_error_vertices[1], 'min')
-        #print(f'Merged {min_error_vertices[0]} and {min_error_vertices[1]} into new graph with vertices: {list(newG.vertices.keys())}')
-        return newG, min_error_vertices
-
-def path_test():
-
-    ftw_min = 0
-    ftw_prod = 0
-    ftw_luk = 0
-
-    sequence_min = []
-    sequence_prod = []
-    sequence_luk = []
-
-    max_len = 10
-    num_vertices = 1
-
-    running = True
-
-    while running:
-        # Construct the graph, the vertices and the edges
-        # There should always be generated new vertex and connected to the previous one forming path -> Node0 to Node1 to Node2 etc.
-        # Another permutation shall be generation of the edge memberships, they shall be random -> so one iteration Node0 0.1 Node1 0.2 Node2 0.3 Node3, next iteration Node0 0.3 Node1 0.1 Node2 0.2 Node3
-        # Trying all combinations +0.1
-
-        graph = Graph()
-
-        for i in range(num_vertices):
-            vertex = Vertex(f'Node{i}', 1)
-            graph.add_vertex(vertex)
-
-        for i in range(num_vertices - 1):
-            random_membership = random.random()
-            rounded = round(random_membership, 1)
-            graph.add_edge(f'Node{i}', f'Node{i+1}', (rounded, 0))
-
-        graphCopy = deepcopy(graph)
-        secondGraphCopy = deepcopy(graph)
-
-        print (f'Vertices: {list(graph.vertices.keys())}')
-        for vertex in graph.vertices:
-            print(f'Vertex: {vertex} Neighbors: {graph.vertices[vertex].neighbors}')
-
-        twin_width(graph, 'min')
-        ftw_min = lowest_max_degree
-        sequence_min = best_sequences
-
-        twin_width(graphCopy, 'prod')
-        ftw_prod = lowest_max_degree
-        sequence_prod = best_sequences
-
-        twin_width(secondGraphCopy, 'luk')
-        ftw_luk = lowest_max_degree
-        sequence_luk = best_sequences
-
-        if ftw_min != ftw_prod or ftw_min != ftw_luk or ftw_prod != ftw_luk:
-            print(f'FTW min: {ftw_min} FTW prod: {ftw_prod} FTW luk: {ftw_luk}')
-            print(f'Sequence min: {sequence_min}')
-            print(f'Sequence prod: {sequence_prod}')
-            print(f'Sequence luk: {sequence_luk}')
-            running = False
-
-        if num_vertices == max_len:
-            running = False
-
-        ftw_min = 0
-        ftw_prod = 0
-        ftw_luk = 0
-
-        sequence_min = []
-        sequence_prod = []
-        sequence_luk = []
-
-        num_vertices += 1
-
-def path_test_v2():
-
-    method_a = True
-    method_b = True
-
-    sequence_a = []
-    sequence_b = []
-
-    max_len = 10
-    num_vertices = 1
-
-    while method_a or method_b and num_vertices < max_len:
-        # Construct the graph, the vertices and the edges
-        # There should always be generated new vertex and connected to the previous one forming path -> Node0 to Node1 to Node2 etc.
-        # Another permutation shall be generation of the edge memberships, they shall be random -> so one iteration Node0 0.1 Node1 0.2 Node2 0.3 Node3, next iteration Node0 0.3 Node1 0.1 Node2 0.2 Node3
-        # Trying all combinations +0.1
-
-        graph = Graph()
-
-        for i in range(num_vertices):
-            vertex = Vertex(f'Node{i}', 1)
-            graph.add_vertex(vertex)
-
-        for i in range(num_vertices - 1):
-            random_membership = random.random()
-            rounded = round(random_membership, 1)
-            graph.add_edge(f'Node{i}', f'Node{i+1}', (rounded, 0))
-
-        graphCopy = deepcopy(graph)
-        secondGraphCopy = deepcopy(graph)
-
-        print (f'Vertices: {list(graph.vertices.keys())}')
-        for vertex in graph.vertices:
-            print(f'Vertex: {vertex} Neighbors: {graph.vertices[vertex].neighbors}')
-
-        while len(graphCopy.vertices) > 1:
-            graphCopy, vertices = merge_two_least_error(graphCopy)
-            sequence_a.append(vertices)
-
-        while len(secondGraphCopy.vertices) > 1:
-            secondGraphCopy, vertices = merge_two_least_error_graphcheck(secondGraphCopy)
-            sequence_b.append(vertices)
-
-        twin_width(graph, 'min')
-
-        if sequence_a not in best_sequences:
-            method_a = False
-            print(f'Method A failed at {num_vertices} vertices')
-            print(f'Best sequences: {best_sequences}')
-            print(f'Sequence A: {sequence_a}')
-        if sequence_b not in best_sequences:
-            method_b = False
-            print(f'Method B failed at {num_vertices} vertices')
-            print(f'Best sequences: {best_sequences}')
-            print(f'Sequence B: {sequence_b}')
-
-        sequence_a = []
-        sequence_b = []
-        num_vertices += 1
-
-def path_test_tnorm():
-
-    ftw_min = 0
-    ftw_prod = 0
-    ftw_luk = 0
-
-    sequence_min = []
-    sequence_prod = []
-    sequence_luk = []
-
-    max_len = 10
-    num_vertices = 1
-
-    running = True
-
-    while running:
-        # Construct the graph, the vertices and the edges
-        # There should always be generated new vertex and connected to the previous one forming path -> Node0 to Node1 to Node2 etc.
-        # Another permutation shall be generation of the edge memberships, they shall be random -> so one iteration Node0 0.1 Node1 0.2 Node2 0.3 Node3, next iteration Node0 0.3 Node1 0.1 Node2 0.2 Node3
-        # Trying all combinations +0.1
-
-        graph = Graph()
-
-        for i in range(num_vertices):
-            vertex = Vertex(f'Node{i}', 1)
-            graph.add_vertex(vertex)
-
-        for i in range(num_vertices - 1):
-            random_membership = random.random()
-            rounded = round(random_membership, 1)
-            graph.add_edge(f'Node{i}', f'Node{i+1}', (rounded, 0))
-
-        graphCopy = deepcopy(graph)
-        secondGraphCopy = deepcopy(graph)
-
-        print (f'Vertices: {list(graph.vertices.keys())}')
-        for vertex in graph.vertices:
-            print(f'Vertex: {vertex} Neighbors: {graph.vertices[vertex].neighbors}')
-
-        twin_width(graph, 'min')
-        ftw_min = lowest_max_degree
-        sequence_min = best_sequences
-
-        twin_width(graphCopy, 'prod')
-        ftw_prod = lowest_max_degree
-        sequence_prod = best_sequences
-
-        twin_width(secondGraphCopy, 'luk')
-        ftw_luk = lowest_max_degree
-        sequence_luk = best_sequences
-
-        if ftw_min > ftw_prod or ftw_min > ftw_luk or ftw_prod > ftw_luk:
-            print(f'FTW min: {ftw_min} FTW prod: {ftw_prod} FTW luk: {ftw_luk}')
-            print(f'Sequence min: {sequence_min}')
-            print(f'Sequence prod: {sequence_prod}')
-            print(f'Sequence luk: {sequence_luk}')
-            running = False
-
-        if num_vertices == max_len:
-            running = False
-
-        ftw_min = 0
-        ftw_prod = 0
-        ftw_luk = 0
-
-        sequence_min = []
-        sequence_prod = []
-        sequence_luk = []
-
-        num_vertices += 1
 
 if __name__ == '__main__':
+    # Example usage
+    g = Graph()
+    g.add_vertex(Vertex('Node1', 0.5))
+    g.add_vertex(Vertex('Node2', 0.5))
+    g.add_vertex(Vertex('Node3', 0.5))
+    g.add_edge('Node1', 'Node2', (0.5, 0.5))
+    g.add_edge('Node2', 'Node3', (0.5, 0.5))
+    g.add_edge('Node1', 'Node3', (0.5, 0.5))
 
-     path_test_tnorm()
+    result = twin_width(g, 'min')
+    print(f"Lowest max degree: {result[0]}")
+    print(f"Best sequences: {result[1]}")
