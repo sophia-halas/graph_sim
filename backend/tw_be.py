@@ -1,8 +1,13 @@
-# twinwidth_backend.py
-# The following code is a Python implementation of the (fuzzy) twin-width algorithm.
-# It uses a representation of graph and vertices as classes.
-# The algorithm and computation is based on Twin-Width Fuzzification by Marek Effenberger
-# Created by Marek Effenberger as a part of his bachelor thesis, BUT FIT 2025
+"""
+Author:        Marek Effenberger
+File:          tw_be.py
+
+This module implements the (fuzzy) twin-width algorithm in Python using 
+object-oriented representations of graphs and vertices. The computation 
+is based on the concept of Twin-Width Fuzzification as presented in the 
+bachelor thesis by Marek Effenberger at BUT FIT in 2025.
+"""
+
 
 from itertools import combinations
 from copy import deepcopy

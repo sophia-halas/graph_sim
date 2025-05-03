@@ -1,3 +1,12 @@
+/*
+Author:        Sophia Halasova
+File:          style.css
+
+Contains CSS styles for the frontend of the web application used to 
+visualize fuzzy graphs and interact with similarity computations.
+This code is part of a bachelor thesis focused on fuzzy graph similarity
+by Sophia Halasova at BUT FIT in 2025.
+*/
 .container{
     display: flex;
     flex-direction: column; 

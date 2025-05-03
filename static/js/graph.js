@@ -1,3 +1,15 @@
+/**
+ * Author:        Sophia Halasova
+ * File:          graph.js
+ * 
+ * JavaScript module for drawing and managing fuzzy graphs in the browser.
+ * Handles user interactions, vertex/edge creation, and integration 
+ * with the backend for fuzzy similarity and fuzzy twin-width
+ * calculations. 
+ * This code is part of a bachelor thesis focused on fuzzy graph similarity
+ * by Sophia Halasova at BUT FIT in 2025.
+ */
+
 // Global variables for node management
 let nodeId = 0; // Unique identifier for each node
 var nodes = []; // Stores all nodes with their positions
@@ -437,18 +449,6 @@ document.getElementById("addEdgeRight").addEventListener("click", function() { a
 document.getElementById("deleteLeft").addEventListener("click", function() { deleteGraph(cyLeft);});
 document.getElementById("deleteRight").addEventListener("click", function() { deleteGraph(cyRight);});
 document.getElementById("compute").addEventListener("click", () => { showLoading(); setTimeout(async () => { await getTwinWidth(cyLeft, "tw1"); await getTwinWidth(cyRight, "tw2"); await getSimilarity(); hideLoading(); }, 100); });
-/*document.getElementById("compute").addEventListener("click", async () => {
-    showLoading();
-
-    // nechaj browser "vymaľovať" loading screen
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    await getTwinWidth(cyLeft, "tw1");
-    await getTwinWidth(cyRight, "tw2");
-    await getSimilarity();
-
-    hideLoading();
-});*/
 
 document.getElementById("iso").addEventListener("click", async function() { await getIsomorphisms();});
 

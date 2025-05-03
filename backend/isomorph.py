@@ -1,3 +1,15 @@
+"""
+Author:        Sophia Halasova
+File:          isomorphism.py
+
+This module defines the function `find_isomorphisms`, which determines
+whether there exists an isomorphism between two graphs of type `Graph`.
+It checks all permutations of vertex mappings and validates adjacency 
+preservation.
+This code is part of a bachelor thesis focused on fuzzy graph similarity
+by Sophia Halasova at BUT FIT in 2025.
+"""
+
 from itertools import permutations
 from collections import defaultdict
 from backend.tw_be import Graph, Vertex
@@ -10,7 +22,7 @@ def find_isomorphisms(G1, G2):
     Finds all isomorphisms between two graphs by considering their vertices and edges.
 
     This function checks if there exists a valid mapping between the vertices of two graphs such that
-    the structure of the graphs (i.e., adjacency relations) is preserved.
+    the structure of the graphs (adjacency relations) is preserved.
 
     :param G1: First graph (Graph object)
     :param G2: Second graph (Graph object)
@@ -47,6 +59,7 @@ def find_isomorphisms(G1, G2):
                 g2_v1 = G2.vertices[mapped_v1]
                 found = any(n[0] == mapped_neighbor for n in g2_v1.neighbors)
 
+                # Check the neighbour count of the corresponding vertices in G1 and in G2
                 if len(v1.neighbors) != len(g2_v1.neighbors):
                     valid = False
                     break
@@ -64,19 +77,3 @@ def find_isomorphisms(G1, G2):
     # Return a boolean indicating if there are any valid isomorphisms and the list of valid mappings
     return len(all_mappings) > 0, all_mappings
 
-
-# G1 = Graph()
-# G1.add_vertex(Vertex("A", 0.8))
-# G1.add_vertex(Vertex("B", 0.6))
-# G1.add_vertex(Vertex("C", 0.9))
-# G1.add_edge("A", "B", (1, 0))
-# G1.add_edge("B", "C", (0, 1))
-
-# G2 = Graph()
-# G2.add_vertex(Vertex("X", 0.8))
-# G2.add_vertex(Vertex("Y", 0.6))
-# G2.add_vertex(Vertex("Z", 0.9))
-# G2.add_edge("X", "Y", (1, 0))
-# G2.add_edge("Y", "Z", (0, 1))
-
-# print("Are graphs isomorphic?", find_isomorphisms(G1, G2))

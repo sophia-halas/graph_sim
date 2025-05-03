@@ -1,5 +1,18 @@
+"""
+Author:        Sophia Halasova
+File:          app.py
+
+This file defines the backend API for the fuzzy graph similarity 
+web application. It provides endpoints to compute fuzzy twin-width, 
+check graph isomorphisms, and calculate similarity using selected 
+t-norms. It integrates custom graph logic implemented in the 
+backend module and serves the frontend HTML interface.
+This code is part of a bachelor thesis focused on fuzzy graph similarity
+by Sophia Halasova at BUT FIT in 2025.
+"""
+
 from flask import Flask, request, jsonify, render_template
-from backend.tw_be import Graph, Vertex, twin_width  # Importuj svoje triedy a funkciu
+from backend.tw_be import Graph, Vertex, twin_width
 from backend.isomorph import find_isomorphisms
 from backend.similarity import compute_similarity
 from flask_cors import CORS
@@ -106,16 +119,6 @@ def get_similarity():
     G2 = build_graph_from_json(data['graph2'])
     if not G1 or not G2:
         return jsonify({'error': "Invalid graph structure"}), 400
-
-    #vymazat!!!
-    print(data['graph1'])
-    print(data['graph2'])
-    print(".................................")
-    print(G1)
-    print(G2)
-    print("......isomorphism............")
-    print(find_isomorphisms(G1, G2))
-
 
     # Compute similarity
     similarity = compute_similarity(G1, G2, data["tnorm"])

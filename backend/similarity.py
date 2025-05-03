@@ -1,3 +1,14 @@
+"""
+Author:        Sophia Halasova
+File:          similarity.py
+
+This module provides functions for computing the similarity between two 
+fuzzy graphs. It includes support for multiple t-norm functions 
+(Minimum t-norm, Product t-norm, Łukasiewicz t-norm, Drastic Product)
+and uses graph isomorphisms as a prerequisite for similarity evaluation.
+This code is part of a bachelor thesis focused on fuzzy graph similarity
+by Sophia Halasova at BUT FIT in 2025.
+"""
 import numpy as np
 from backend.isomorph import find_isomorphisms
 from backend.tw_be import Graph, Vertex
