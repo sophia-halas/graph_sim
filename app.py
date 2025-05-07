@@ -12,7 +12,7 @@ by Sophia Halasova at BUT FIT in 2025.
 """
 
 from flask import Flask, request, jsonify, render_template
-from backend.tw_be import Graph, Vertex, twin_width
+from backend.TWBackend import Graph, Vertex, twin_width
 from backend.isomorph import find_isomorphisms
 from backend.similarity import compute_similarity
 from flask_cors import CORS

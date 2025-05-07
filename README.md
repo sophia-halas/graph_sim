@@ -8,7 +8,7 @@ The application has a web-based interface (frontend) and a backend that handles 
 ├── `backend/`
 │ ├── `similarity.py` &emsp;&emsp;&emsp;# Fuzzy graph similarity calculation
 │ ├── `isomorphism.py` &emsp;&emsp;# Graph isomorphism detection
-│ └── `tw_be.py` &emsp;&emsp;&emsp;&emsp;&emsp;# Fuzzy twin-width computation by Marek Effenberger
+│ └── `TWBackend.py` &emsp;&emsp;&emsp;&emsp;&emsp;# Fuzzy twin-width computation by Marek Effenberger
 ├── `static/`
 │ ├── `css/style.css` &emsp;&emsp;&emsp;# App styles
 │ └── `js/graph.js` &emsp;&emsp;&emsp;&emsp;# Graph drawing and API communication
@@ -19,6 +19,7 @@ The application has a web-based interface (frontend) and a backend that handles 
 
 ### How to Run the Application Locally
 1. Go to the root directory of the project
+`cd graph_sim`
 2. Create and activate a virtual environment
 `python -m venv venv`
 `source venv/bin/activate`        &emsp; # Linux/macOS

@@ -11,7 +11,7 @@ by Sophia Halasova at BUT FIT in 2025.
 """
 import numpy as np
 from backend.isomorph import find_isomorphisms
-from backend.tw_be import Graph, Vertex
+from backend.TWBackend import Graph, Vertex
 
 def t_norm(u, v, tnorm):
     """

@@ -12,10 +12,20 @@ by Sophia Halasova at BUT FIT in 2025.
 
 from itertools import permutations
 from collections import defaultdict
-from backend.tw_be import Graph, Vertex
-import itertools
+from backend.TWBackend import Graph, Vertex
 import numpy as np
 import networkx as nx
+from networkx.algorithms.isomorphism import GraphMatcher
+
+def convert_to_networkx(my_graph):
+    """
+    Converts a Graph object to a networkx.Graph.
+    """
+    G = nx.Graph()
+    for vertex in my_graph.vertices.values():
+        for neighbor_name, _ in vertex.neighbors:
+            G.add_edge(vertex.name, neighbor_name)
+    return G
 
 def find_isomorphisms(G1, G2):
     """
@@ -31,49 +41,11 @@ def find_isomorphisms(G1, G2):
              - A list of mappings where each mapping is a dictionary that 
                maps vertices from G1 to corresponding vertices in G2.
     """
-    # Check if the graphs have the same number of vertices, as isomorphisms are only possible in this case
-    if len(G1.vertices) != len(G2.vertices):
-        return False, []
+    nx_g1 = convert_to_networkx(G1)
+    nx_g2 = convert_to_networkx(G2)
 
-    # Create lists of vertex names for both graphs to generate all possible permutations of G2's vertices
-    vertex_names_G1 = list(G1.vertices.keys())
-    vertex_names_G2 = list(G2.vertices.keys())
-    all_mappings = []
+    matcher = GraphMatcher(nx_g1, nx_g2)
+    all_mappings = list(matcher.isomorphisms_iter())
 
-    # Generate all permutations of G2's vertex names and try each as a possible mapping
-    for perm in itertools.permutations(vertex_names_G2):
-        # Create a mapping from G1 vertices to G2 vertices based on the current permutation
-        mapping = {vertex_names_G1[i]: perm[i] for i in range(len(perm))}
-
-         # Check if the mapping maintains the adjacency structure
-        valid = True
-        for v1 in G1.vertices.values():
-            # Get the corresponding vertex in G2 based on the current mapping
-            mapped_v1 = mapping[v1.name]
-
-            # For each neighbor of v1 in G1, check if the corresponding neighbor exists in G2
-            for neighbor, _ in v1.neighbors:
-                mapped_neighbor = mapping[neighbor]
-                
-                # Find the corresponding vertex in G2 and check if an edge exists between them
-                g2_v1 = G2.vertices[mapped_v1]
-                found = any(n[0] == mapped_neighbor for n in g2_v1.neighbors)
-
-                # Check the neighbour count of the corresponding vertices in G1 and in G2
-                if len(v1.neighbors) != len(g2_v1.neighbors):
-                    valid = False
-                    break
-                
-                if not found:
-                    valid = False
-                    break
-            
-            if not valid:
-                break
-        # If the mapping is valid, add it to the list of valid mappings
-        if valid:
-            all_mappings.append(mapping)
-            
-    # Return a boolean indicating if there are any valid isomorphisms and the list of valid mappings
     return len(all_mappings) > 0, all_mappings
 

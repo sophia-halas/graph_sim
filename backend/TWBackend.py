@@ -1,6 +1,6 @@
 """
 Author:        Marek Effenberger
-File:          tw_be.py
+File:          TWBackend.py
 
 This module implements the (fuzzy) twin-width algorithm in Python using 
 object-oriented representations of graphs and vertices. The computation 
