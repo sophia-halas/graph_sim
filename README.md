@@ -28,19 +28,29 @@ cd graph_sim
 ```
 2. (Optional) Upgrade `pip`
 ```bash
+# macOS / Linux
+python3 -m pip install --upgrade pip
+# Windows
 python -m pip install --upgrade pip
 ```
 3. Install the required Python packages
 ```bash
+# macOS / Linux
+python3 -m pip install -r requirements.txt
+# Windows
 python -m pip install -r requirements.txt
 ```
+
 4. Start the Flask server
 ```bash
+# macOS / Linux
+python3 app.py
+# Windows
 python app.py
 ```
 5. Open your browser and go to
 ```bash
-http://localhost:5000/graph-sim
+http://localhost:5001/graph-sim
 ```
 
 The app is also accessible online at https://graph-sim.onrender.com/graph-sim
