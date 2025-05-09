@@ -126,4 +126,4 @@ def get_similarity():
     return jsonify({'similarity': similarity})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000) # Start Flask server
+    app.run(debug=True, host='0.0.0.0', port=5001) # Start Flask server
