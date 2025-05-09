@@ -20,12 +20,10 @@ The application has a web-based interface (frontend) and a backend that handles 
 ### How to Run the Application Locally
 1. Go to the root directory of the project
 `cd graph_sim`
-2. Create and activate a virtual environment
-`python -m venv venv`
-`source venv/bin/activate`        &emsp; # Linux/macOS
-`venv\Scripts\activate`          &emsp; &emsp; &emsp;# Windows
+2. (Optional) Upgrade `pip`
+`python -m pip install --upgrade pip`
 3. Install the required Python packages:
-`pip install -r requirements.txt`
+`python -m pip install -r requirements.txt`
 4. Start the Flask server
 `python app.py`
 5. Open your browser and go to
