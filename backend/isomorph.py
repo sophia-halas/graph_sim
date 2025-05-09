@@ -1,13 +1,14 @@
 """
-Author:        Sophia Halasova
-File:          isomorphism.py
+Author:         Sophia Halasova
+File:           isomorphism.py
 
-This module defines the function `find_isomorphisms`, which determines
-whether there exists an isomorphism between two graphs of type `Graph`.
-It checks all permutations of vertex mappings and validates adjacency 
-preservation.
-This code is part of a bachelor thesis focused on fuzzy graph similarity
-by Sophia Halasova at BUT FIT in 2025.
+Description:    This module defines the function `find_isomorphisms`, which checks 
+                whether two graphs (instances of the custom `Graph` class) are 
+                isomorphic. It uses the NetworkX library to convert the graphs and 
+                perform isomorphism detection based on structural equivalence.
+
+                This code is part of a bachelor thesis focused on fuzzy graph similarity
+                by Sophia Halasova at BUT FIT in 2025.
 """
 
 from itertools import permutations

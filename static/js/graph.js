@@ -1,13 +1,14 @@
 /**
- * Author:        Sophia Halasova
- * File:          graph.js
+ * Author:          Sophia Halasova
+ * File:            graph.js
  * 
- * JavaScript module for drawing and managing fuzzy graphs in the browser.
- * Handles user interactions, vertex/edge creation, and integration 
- * with the backend for fuzzy similarity and fuzzy twin-width
- * calculations. 
- * This code is part of a bachelor thesis focused on fuzzy graph similarity
- * by Sophia Halasova at BUT FIT in 2025.
+ * Description:     JavaScript module for drawing and managing fuzzy graphs in the browser.
+ *                  Handles user interactions, vertex/edge creation, and integration 
+ *                  with the backend for fuzzy similarity and fuzzy twin-width
+ *                  calculations. 
+ * 
+ *                  This code is part of a bachelor thesis focused on fuzzy graph similarity
+ *                  by Sophia Halasova at BUT FIT in 2025.
  */
 
 // Global variables for node management

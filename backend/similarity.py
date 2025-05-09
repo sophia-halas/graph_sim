@@ -1,13 +1,14 @@
 """
-Author:        Sophia Halasova
-File:          similarity.py
+Author:         Sophia Halasova
+File:           similarity.py
 
-This module provides functions for computing the similarity between two 
-fuzzy graphs. It includes support for multiple t-norm functions 
-(Minimum t-norm, Product t-norm, Łukasiewicz t-norm, Drastic Product)
-and uses graph isomorphisms as a prerequisite for similarity evaluation.
-This code is part of a bachelor thesis focused on fuzzy graph similarity
-by Sophia Halasova at BUT FIT in 2025.
+Description:    This module provides functions for computing the similarity between two 
+                fuzzy graphs. It includes support for multiple t-norm functions 
+                (Minimum t-norm, Product t-norm, Łukasiewicz t-norm, Drastic Product)
+                and uses graph isomorphisms as a prerequisite for similarity evaluation.
+
+                This code is part of a bachelor thesis focused on fuzzy graph similarity
+                by Sophia Halasova at BUT FIT in 2025.
 """
 import numpy as np
 from backend.isomorph import find_isomorphisms
@@ -39,16 +40,21 @@ def t_norm(u, v, tnorm):
 
 def compute_similarity(G1, G2, tnorm):
     """
-    Computes the fuzzy similarity between two fuzzy graphs.
+    Calculates the fuzzy similarity S(G1, G2) between two fuzzy graphs using isomorphism mappings 
+    and a specified t-norm operator.
 
-    The function first finds all possible isomorphisms between the graphs. 
-    If they are not isomorphic, similarity cannot be computed. 
-    Otherwise, it calculates a similarity measure using t-norm operations.
+    The function proceeds in the following steps:
+    1. It checks whether the input graphs G1 and G2 are isomorphic. If no isomorphism exists, 
+       similarity is undefined and the function returns "X".
+    2. For each isomorphism, it computes a dissimilarity score based on the absolute differences 
+       between corresponding edge weights in G1 and G2.
+    3. The dissimilarity values are aggregated using the provided t-norm.
+    4. The final similarity is defined as 1 minus the aggregated dissimilarity.
 
-    :param G1: First fuzzy graph (Graph object)
-    :param G2: Second fuzzy graph (Graph object)
-    :param tnorm: The t-norm used in the computation
-    :return: Fuzzy similarity S(G1, G2) in the range [0,1] or "X" if isomorphism does not exist
+    :param G1: First fuzzy graph (instance of Graph)
+    :param G2: Second fuzzy graph (instance of Graph)
+    :param tnorm: T-norm operator to use for aggregation ('min', 'prod', etc.)
+    :return: A float in [0, 1] representing the fuzzy similarity, or "X" if graphs are not isomorphic
     """
     # Find all isomorphisms between G1 and G2
     isomorphic, mappings = find_isomorphisms(G1, G2)

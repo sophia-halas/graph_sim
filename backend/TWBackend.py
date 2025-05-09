@@ -1,11 +1,11 @@
 """
-Author:        Marek Effenberger
-File:          TWBackend.py
+Author:         Marek Effenberger
+File:           TWBackend.py
 
-This module implements the (fuzzy) twin-width algorithm in Python using 
-object-oriented representations of graphs and vertices. The computation 
-is based on the concept of Twin-Width Fuzzification as presented in the 
-bachelor thesis by Marek Effenberger at BUT FIT in 2025.
+Description:    This module implements the (fuzzy) twin-width algorithm in Python using 
+                object-oriented representations of graphs and vertices. The computation 
+                is based on the concept of Twin-Width Fuzzification as presented in the 
+                bachelor thesis by Marek Effenberger at BUT FIT in 2025.
 """
 
 

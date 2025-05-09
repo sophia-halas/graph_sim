@@ -1,14 +1,15 @@
 """
-Author:        Sophia Halasova
-File:          app.py
+Author:         Sophia Halasova
+File:           app.py
 
-This file defines the backend API for the fuzzy graph similarity 
-web application. It provides endpoints to compute fuzzy twin-width, 
-check graph isomorphisms, and calculate similarity using selected 
-t-norms. It integrates custom graph logic implemented in the 
-backend module and serves the frontend HTML interface.
-This code is part of a bachelor thesis focused on fuzzy graph similarity
-by Sophia Halasova at BUT FIT in 2025.
+Description:    This file defines the backend API for the fuzzy graph similarity 
+                web application. It provides endpoints to compute fuzzy twin-width, 
+                check graph isomorphisms, and calculate similarity using selected 
+                t-norms. It integrates custom graph logic implemented in the 
+                backend module and serves the frontend HTML interface.
+                
+                This code is part of a bachelor thesis focused on fuzzy graph similarity
+                by Sophia Halasova at BUT FIT in 2025.
 """
 
 from flask import Flask, request, jsonify, render_template
