@@ -45,10 +45,6 @@ def build_graph_from_json(data):
     except (KeyError, ValueError, TypeError):
         return None # Return None if JSON structure is incorrect
 
-@app.route('/', methods=['GET'])
-def index():
-    return "App is running!"
-
 @app.route('/graph-sim', methods=['GET'])
 def graph_sim():
     return render_template('graph_sim.html') # Render a front-end page 
